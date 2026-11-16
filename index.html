@@ -167,6 +167,51 @@ table.week td:last-child{border-radius:0 12px 12px 0}
 table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:0 20px}
 .section{display:flex;flex-direction:column;justify-content:center;height:100%}
 .section .big{font-size:150px;font-weight:900;letter-spacing:-.04em;line-height:.9}
+
+/* ---- demo v2: high-tech layer ---- */
+.topo{display:flex;align-items:center}
+.node{display:flex;gap:9px;align-items:center;padding:7px 12px;border-radius:12px;background:rgba(6,23,15,.85);border:1px solid rgba(255,255,255,.12);font:11px var(--mono);color:var(--muted);transition:border-color .4s,box-shadow .4s}
+.node b{display:block;color:var(--cream);font:700 12.5px var(--mono)}
+.node i{width:9px;height:9px;border-radius:50%;background:#46564e;transition:.4s;flex:none}
+.node.on{border-color:rgba(92,196,137,.6);box-shadow:0 0 18px rgba(92,196,137,.22)}
+.node.on i{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+.node.agent.on{border-color:var(--gold-l);box-shadow:0 0 24px rgba(242,199,92,.35)}
+.node.agent.on i{background:var(--gold-l);box-shadow:0 0 10px var(--gold-l)}
+.node.hit{animation:hit .45s ease}
+@keyframes hit{50%{transform:scale(1.07);box-shadow:0 0 34px rgba(242,199,92,.6)}}
+.wire{position:relative;width:64px;height:2px;background:linear-gradient(90deg,rgba(242,199,92,.12),rgba(242,199,92,.5),rgba(242,199,92,.12))}
+.pk{position:absolute;top:-4px;left:0;width:10px;height:10px;border-radius:50%;background:var(--gold-l);box-shadow:0 0 12px var(--gold-l),0 0 26px var(--gold)}
+.pk.res{background:var(--ok);box-shadow:0 0 12px var(--ok),0 0 24px var(--ok)}
+.msg.boot{font:12.5px var(--mono);color:#7fd6a4;white-space:pre-wrap;animation:none}
+.msg.boot b{color:var(--cream)}
+.msg.boot .gold{color:var(--gold-l);font-weight:700}
+.console{position:relative;transition:box-shadow .4s}
+.console.busy{box-shadow:0 0 0 1px rgba(242,199,92,.55),0 0 46px rgba(242,199,92,.2)}
+.console::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:18px;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px)}
+.board{position:relative;overflow:hidden}
+.sweep{position:absolute;top:0;bottom:0;left:-220px;width:220px;background:linear-gradient(90deg,transparent,rgba(242,199,92,.16) 70%,rgba(242,199,92,.55) 97%,transparent);animation:sweep 1.25s ease-in-out forwards;pointer-events:none;z-index:5}
+@keyframes sweep{to{left:100%}}
+.tcard.risk{border-color:rgba(224,97,75,.85);animation:risk .9s ease 3}
+@keyframes risk{50%{box-shadow:0 0 0 2px var(--red),0 0 28px rgba(224,97,75,.65)}}
+.srvtag{font:700 10px var(--mono);padding:1px 6px;border-radius:4px;margin-right:7px;background:rgba(92,196,137,.18);color:#9ee6b8}
+.tool.harbor{border-color:rgba(242,199,92,.5)}
+.tool.harbor .th{color:var(--gold-l)}
+.tool.harbor .srvtag{background:rgba(242,199,92,.2);color:var(--gold-l)}
+.hwin{position:absolute;left:50%;top:50%;width:620px;transform:translate(-50%,-50%);background:#f6f1e3;border-radius:14px;box-shadow:0 30px 90px rgba(0,0,0,.65),0 0 0 1px rgba(242,199,92,.7),0 0 60px rgba(242,199,92,.25);overflow:hidden;z-index:6;animation:winIn .65s cubic-bezier(.2,.9,.25,1.25)}
+@keyframes winIn{from{opacity:0;transform:translate(-50%,-38%) scale(.82)}}
+.hbar{display:flex;align-items:center;gap:10px;padding:9px 12px;background:#0b2419;font:12px var(--mono);color:var(--muted)}
+.hbar .dots i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.hbar .url{flex:1;background:#06170f;border-radius:6px;padding:4px 10px;color:#cfe8da}
+.hx{background:none;border:0;color:var(--muted);cursor:pointer;font-size:15px}
+.hbody{padding:20px 26px 24px;max-height:430px;overflow:auto}
+.hbody p,.hbody li{font-size:14.5px;line-height:1.55;color:#1d2b25}
+.hbody ul{margin:4px 0 4px 18px}
+.hbody code{font:12.5px var(--mono);color:#7a5a00}
+.hbrand{font:700 11px var(--mono);letter-spacing:.14em;color:#154734;border-bottom:3px solid #BD8B13;padding-bottom:8px;margin-bottom:12px}
+.stamp{position:absolute;right:26px;top:60px;border:3px solid #2f8a57;color:#2f8a57;font:900 17px var(--mono);letter-spacing:.14em;padding:4px 10px;border-radius:6px;transform:rotate(-12deg);animation:stamp .45s .55s both cubic-bezier(.2,.9,.3,1.5)}
+@keyframes stamp{from{opacity:0;transform:rotate(-12deg) scale(2.4)}}
+.hud{display:flex;gap:14px}
+.hud b{color:var(--gold-l)}
 </style>
 </head>
 <body>
@@ -362,15 +407,22 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
   <div class="section">
     <div class="kicker reveal">Live demo</div>
     <div class="big reveal d1">Meet the<br><span class="grad">PM agent.</span></div>
-    <p class="reveal d2" style="margin-top:36px;font-size:28px;max-width:1100px">Project: <b>Mustang Rover</b>, a fictional autonomous campus delivery robot. Five engineers, fourteen tasks, four days left in the sprint. The board sits behind an MCP server with seven tools.</p>
+    <p class="reveal d2" style="margin-top:36px;font-size:28px;max-width:1100px">Project: <b>Mustang Rover</b>, a fictional autonomous campus delivery robot. Five engineers, fourteen tasks, four days left in the sprint. The agent connects to two MCP servers: the sprint board, and Harbor, a docs portal it publishes to.</p>
   </div>
 </section>
 
 <!-- 10 DEMO -->
 <section class="slide" id="demo" data-title="Live demo">
+  <canvas id="net" width="1600" height="900" style="position:absolute;inset:0;pointer-events:none"></canvas>
   <div class="demo-head">
     <h2>Mustang Rover · <span class="gold">PM agent</span></h2>
-    <div class="live"><i></i> Board connected over MCP · 7 tools</div>
+    <div class="topo">
+      <div class="node" id="nBoard"><i></i><div><b>mustang-rover-board</b>stdio · <span id="tBoard">–</span> tools</div></div>
+      <div class="wire" id="wBoard"></div>
+      <div class="node agent" id="nAgent"><i></i><div><b>pm-agent</b>MCP host</div></div>
+      <div class="wire" id="wHarbor"></div>
+      <div class="node" id="nHarbor"><i></i><div><b>harbor-docs</b>stdio · <span id="tHarbor">–</span> tools</div></div>
+    </div>
   </div>
   <div class="demo-grid">
     <div class="board">
@@ -379,16 +431,17 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
       <div class="team" id="team"></div>
     </div>
     <div class="console" id="console">
-      <div class="con-top"><span><b>pm-agent</b> · mustang-rover-board</span><span id="callCount">0 tool calls</span></div>
-      <div id="log"><div class="msg think">Connected. tools/list returned 7 tools. Ask me about the sprint.</div></div>
+      <div class="con-top"><span><b>pm-agent</b> · mustang-rover-board</span><span class="hud"><span><b id="callCount">0</b> tool calls</span><span><b id="writes">0</b> writes approved</span></span></div>
+      <div id="log"></div>
       <div class="chips" id="chips">
         <button class="chip" data-s="risk">What's at risk this sprint?</button>
-        <button class="chip" data-s="rebalance">Fix ownership gaps and rebalance</button>
-        <button class="chip" data-s="unblock">The encoder arrived. Unblock R-104</button>
-        <button class="chip" data-s="report">Draft Friday's leadership update</button>
+        <button class="chip" data-s="rebalance">Fix ownership gaps</button>
+        <button class="chip" data-s="unblock">Encoder arrived: unblock R-104</button>
+        <button class="chip" data-s="report">Draft the leadership update</button>
+        <button class="chip" data-s="publish">Publish it to Harbor</button>
       </div>
       <div class="inrow"><input id="ask" placeholder="Ask the agent anything about the sprint…"><button id="send">→</button></div>
-      <div class="small" style="padding:0 14px 10px">Tool calls run live against the board in this page. The agent's plan is a scripted replay; the full LLM version runs in the terminal.</div>
+      <div class="small" style="padding:0 14px 10px">Board tool calls run live in this page; Harbor calls are simulated in the public copy. The plan is a scripted replay. The full LLM agent runs in the terminal.</div>
     </div>
   </div>
 </section>
@@ -538,7 +591,7 @@ function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);document.getEle
 addEventListener('resize',fit);fit();
 function go(i){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('active',j===cur));
   document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
-  document.getElementById('counter').textContent=`${cur+1} / ${slides.length}`;history.replaceState(null,'','#'+(cur+1));document.body.classList.toggle('ondemo',slides[cur].id==='demo')}
+  document.getElementById('counter').textContent=`${cur+1} / ${slides.length}`;history.replaceState(null,'','#'+(cur+1));document.body.classList.toggle('ondemo',slides[cur].id==='demo');if(slides[cur].id==='demo')setTimeout(()=>boot(),450)}
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;
   if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1)}
   if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1)}
@@ -621,18 +674,20 @@ function render(flashId){
 }
 
 /* ---------------- agent console ---------------- */
-const log=document.getElementById('log'),con=document.getElementById('console');let calls=0,busy=false;
+const log=document.getElementById('log'),con=document.getElementById('console');let calls=0,busy=false,writes=0,booted=false;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function add(html,cls){const d=document.createElement('div');d.className=cls;d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 async function think(t){add(esc(t),'msg think');await sleep(650)}
-async function call(name,args={}){calls++;document.getElementById('callCount').textContent=calls+' tool calls';
-  const el=add(`<div class="th"><span>→ ${name}(${esc(JSON.stringify(args))})</span><span class="st"><span class="spinner"></span></span></div><pre></pre>`,'tool msg');
-  await sleep(500+Math.random()*450);let res,err=false;try{res=TOOLS[name](args)}catch(e){res={error:e.message};err=true}
+async function call(name,args={},srv='board'){calls++;document.getElementById('callCount').textContent=calls;
+  const H=srv==='harbor';const el=add(`<div class="th"><span><span class="srvtag">${H?'harbor-docs':'board'}</span>${name}(${esc(JSON.stringify(args))})</span><span class="st"><span class="spinner"></span></span></div><pre></pre>`,'tool msg'+(H?' harbor':''));
+  await packet(H?'wHarbor':'wBoard',!H,false);hit(H?'nHarbor':'nBoard');
+  await sleep(250+Math.random()*350);let res,err=false;try{res=(H?HARBOR:TOOLS)[name](args)}catch(e){res={error:e.message};err=true}
+  await packet(H?'wHarbor':'wBoard',H,true);hit('nAgent');
   el.querySelector('pre').textContent=JSON.stringify(res,null,2);const st=el.querySelector('.st');st.textContent=err?'error':'✓ result';st.classList.add(err?'x':'ok');
   el.querySelector('.th').onclick=()=>el.classList.toggle('open');log.scrollTop=log.scrollHeight;await sleep(250);return res}
 function approve(name,args,why){return new Promise(res=>{const el=add(`<div class="ah">APPROVAL NEEDED · WRITE</div><div>${why}</div><div style="margin-top:6px"><code>${name}(${esc(JSON.stringify(args))})</code></div><div class="btns"><button class="btn yes">Approve</button><button class="btn no">Deny</button></div>`,'approve msg');
-  el.querySelector('.yes').onclick=()=>{el.classList.add('done');el.insertAdjacentHTML('beforeend','<div class="small" style="color:var(--ok);margin-top:6px">✓ approved by TPM</div>');res(true)};
+  el.querySelector('.yes').onclick=()=>{el.classList.add('done');writes++;document.getElementById('writes').textContent=writes;el.insertAdjacentHTML('beforeend','<div class="small" style="color:var(--ok);margin-top:6px">✓ approved by TPM</div>');res(true)};
   el.querySelector('.no').onclick=()=>{el.classList.add('done');el.insertAdjacentHTML('beforeend','<div class="small" style="color:var(--red);margin-top:6px">✕ denied by TPM</div>');res(false)}})}
 function md(s){const out=[];let inList=false;
   for(const line of s.split('\n')){let l=esc(line).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/\[(RED|AMBER|GREEN)\]/g,'<span class="rag $1">$1</span>');
@@ -647,9 +702,55 @@ function pickOwner(points){const cp=new Set(criticalPath().path.map(p=>p.id));co
   return workload().filter(w=>!w.overloaded&&w.open_points+points<=w.capacity&&!w.tasks.some(i=>T[i].d<0))
     .sort((a,b)=>(a.open_points-b.open_points)||(a.tasks.some(i=>cp.has(i))-b.tasks.some(i=>cp.has(i))))[0]}
 
+function buildReport(s){const hi=s.risks.filter(r=>r.severity==='high'),cpHit=s.risks.some(r=>r.critical_path&&r.severity==='high');
+  const rag=cpHit?'RED':hi.length?'AMBER':'GREEN';const seen=new Set(),top=[];for(const r of hi){if(!seen.has(r.task)){seen.add(r.task);top.push(r)}if(top.length===3)break}
+  let a=`**Mustang Rover · Sprint 4 · Leadership update**\n**Overall: [${rag}]** ${s.points_done} of ${s.points_total} points done (${s.pct_complete}%), ${s.days_left} days left.\n`;
+  a+=`- **Critical path:** ${s.critical_path.path.map(p=>p.id).join(' → ')}, ${s.critical_path.total_points} points open, owned mostly by ${first(s.critical_path.path[0]?.assignee)}.\n`;
+  a+=top.length?`- **Top risks:** ${top.map(r=>`${r.task} ${r.type}`).join('; ')}.\n`:`- **Top risks:** none rated high.\n`;
+  a+=`- **This week:** ${s.recent_activity.length?s.recent_activity.map(x=>`${x.task} ${x.changes[0]}`).join('; '):'no board changes recorded yet'}.\n`;
+  a+=`- **Ask:** ${byId()['R-104'].status==='blocked'?'help escalating the wheel-encoder vendor (gates integration testing).':rag==='GREEN'?'none this week.':'a decision on scope if the critical path does not close by Thursday.'}`;
+  return a}
+
+/* ---------------- demo v2 effects ---------------- */
+const uid=()=>(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16)}));
+const HARBOR={
+  'harbor-create-page':a=>{const id=uid();return{pageId:id,title:a.title,slug:a.slug,folder:'root',portal:`harbor/page/${id}`}},
+  'harbor-deploy':a=>({deployed:Object.keys(a.files).length+' file(s)',version:1,status:'live'})};
+function packet(wireId,leftward,res){const w=document.getElementById(wireId);const d=document.createElement('div');d.className='pk'+(res?' res':'');w.appendChild(d);
+  const W=w.offsetWidth-10;const a=d.animate([{transform:`translateX(${leftward?W:0}px)`},{transform:`translateX(${leftward?0:W}px)`}],{duration:380,easing:'ease-in-out'});
+  return Promise.race([a.finished,sleep(450)]).then(()=>d.remove())}
+function hit(id){const n=document.getElementById(id);n.classList.remove('hit');void n.offsetWidth;n.classList.add('hit')}
+function sweep(){const b=document.querySelector('.board');const x=document.createElement('div');x.className='sweep';b.appendChild(x);setTimeout(()=>x.remove(),1400)}
+function highlight(ids){ids.forEach(id=>{const el=document.querySelector(`.tcard[data-id="${id}"]`);if(el){el.classList.remove('risk');void el.offsetWidth;el.classList.add('risk')}})}
+function showPreview(text,id){document.querySelectorAll('.hwin').forEach(x=>x.remove());const w=document.createElement('div');w.className='hwin';
+  w.innerHTML=`<div class="hbar"><span class="dots"><i style="background:#e0614b"></i><i style="background:#f0b429"></i><i style="background:#5cc489"></i></span><span class="url">🔒 harbor / page / ${id.slice(0,8)}…</span><button class="hx" title="close">✕</button></div><div class="hbody"><div class="hbrand">HARBOR · MUSTANG ROVER</div>${md(text)}</div><div class="stamp">PUBLISHED</div>`;
+  document.querySelector('.board').appendChild(w);w.querySelector('.hx').onclick=()=>w.remove()}
+async function boot(){if(booted)return;booted=true;busy=true;con.classList.add('busy');log.innerHTML='';
+  const L=async(t,ms=280)=>{add(t,'msg boot');await sleep(ms)};
+  await L('▸ pm-agent host starting · policy loaded');
+  await L('▸ spawn <b>mustang-rover-board</b> · python3 pm_board_server.py (stdio)');
+  await packet('wBoard',true,false);await packet('wBoard',false,true);
+  await L('  initialize → protocolVersion 2024-11-05 ✓',150);
+  document.getElementById('tBoard').textContent='7';document.getElementById('nBoard').classList.add('on');
+  await L('  tools/list → 7 tools ✓');
+  await L('▸ spawn <b>harbor-docs</b> · harbor-docs-mcp (stdio)');
+  await packet('wHarbor',false,false);await packet('wHarbor',true,true);
+  document.getElementById('tHarbor').textContent='20';document.getElementById('nHarbor').classList.add('on');
+  await L('  initialize ✓ · tools/list → 20 tools ✓');
+  document.getElementById('nAgent').classList.add('on');
+  await L('▸ reads: auto-approved · writes: require TPM approval');
+  await L('<span class="gold">READY</span> · 27 tools across 2 MCP servers. Ask me about the sprint.',0);
+  busy=false;con.classList.remove('busy')}
+(()=>{const cv=document.getElementById('net'),g=cv.getContext('2d');const P=[...Array(70)].map(()=>({x:Math.random()*1600,y:Math.random()*900,vx:(Math.random()-.5)*.45,vy:(Math.random()-.5)*.45}));
+  (function tick(){if(slides[cur]&&slides[cur].id==='demo'){g.clearRect(0,0,1600,900);
+    for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>1600)p.vx*=-1;if(p.y<0||p.y>900)p.vy*=-1}
+    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const dx=P[i].x-P[j].x,dy=P[i].y-P[j].y,d=Math.hypot(dx,dy);if(d<150){g.strokeStyle=`rgba(242,199,92,${(1-d/150)*.16})`;g.lineWidth=1;g.beginPath();g.moveTo(P[i].x,P[i].y);g.lineTo(P[j].x,P[j].y);g.stroke()}}
+    g.fillStyle='rgba(242,199,92,.45)';for(const p of P){g.beginPath();g.arc(p.x,p.y,1.8,0,7);g.fill()}}
+    requestAnimationFrame(tick)})()})();
+
 const SCEN={
  async risk(){await think("Goal: decide whether Sprint 4 lands. I'll pull the deterministic risk scan first.");
-  const {risks:R}=await call('analyze_risks');
+  sweep();const {risks:R}=await call('analyze_risks');highlight([...new Set(R.map(r=>r.task).filter(Boolean))]);
   await think("Several high risks. Checking whether they sit on the critical path.");
   const cp=await call('critical_path');
   await think("Now checking whether the people on that path have room.");
@@ -693,24 +794,27 @@ const SCEN={
   if(!await approve('update_task',args,`Move <b>R-104 Motor controller PID tuning</b> from blocked to <b>in progress</b> and log the encoder arrival.`)){await answer('Okay, R-104 stays blocked.');return}
   await call('update_task',args);
   await think("Re-running the risk scan to see what that unlocked.");
-  const {risks:R}=await call('analyze_risks');
+  sweep();const {risks:R}=await call('analyze_risks');highlight([...new Set(R.map(r=>r.task).filter(Boolean))]);
   await answer(`**R-104 is unblocked.** Open risks went from ${before} to ${R.length}. R-106 (integration test) no longer waits on blocked work.\n- R-104 is still ${-byId()['R-104'].d} day late. Ask Diego for a new finish date so Lena can schedule R-106.\n- Top remaining risk: **${R[0]?.task||'Capacity'}** ${R[0]?.detail||'none'}`)},
 
  async report(){await think("Pulling one summary so every number in the update comes from the board.");
-  const s=await call('sprint_summary');const hi=s.risks.filter(r=>r.severity==='high'),cpHit=s.risks.some(r=>r.critical_path&&r.severity==='high');
-  const rag=cpHit?'RED':hi.length?'AMBER':'GREEN';const seen=new Set(),top=[];for(const r of hi){if(!seen.has(r.task)){seen.add(r.task);top.push(r)}if(top.length===3)break}
-  let a=`**Mustang Rover · Sprint 4 · Leadership update**\n**Overall: [${rag}]** ${s.points_done} of ${s.points_total} points done (${s.pct_complete}%), ${s.days_left} days left.\n`;
-  a+=`- **Critical path:** ${s.critical_path.path.map(p=>p.id).join(' → ')}, ${s.critical_path.total_points} points open, owned mostly by ${first(s.critical_path.path[0]?.assignee)}.\n`;
-  a+=top.length?`- **Top risks:** ${top.map(r=>`${r.task} ${r.type}`).join('; ')}.\n`:`- **Top risks:** none rated high.\n`;
-  a+=`- **This week:** ${s.recent_activity.length?s.recent_activity.map(x=>`${x.task} ${x.changes[0]}`).join('; '):'no board changes recorded yet'}.\n`;
-  a+=`- **Ask:** ${byId()['R-104'].status==='blocked'?'help escalating the wheel-encoder vendor (gates integration testing).':rag==='GREEN'?'none this week.':'a decision on scope if the critical path does not close by Thursday.'}\n`;
-  a+=`\nEvery number above came from \`sprint_summary\`. Edit the tone, then send.`;
-  await answer(a)},
+  const s=await call('sprint_summary');await answer(buildReport(s)+`\n\nEvery number above came from \`sprint_summary\`. Edit the tone, then send, or ask me to publish it.`)},
+
+ async publish(){await think("Building the update from the board, then publishing it through the second MCP server.");
+  const s=await call('sprint_summary');const rep=buildReport(s);
+  const title='Mustang Rover · Sprint 4 leadership update',slug='mustang-rover-sprint-4-update';
+  const html=`<!doctype html><html><head><title>${title}<\/title><\/head><body>${md(rep)}<\/body><\/html>`;
+  await think("Publishing to a shared portal is a write that other people will read. Asking first.");
+  if(!await approve('harbor-create-page → harbor-deploy',{title,slug},`Publish the leadership update to <b>Harbor</b> as a new page the team can open.`)){await answer('Okay, not published. Run "Draft the leadership update" if you want to edit it first.');return}
+  const pg=await call('harbor-create-page',{title,slug},'harbor');
+  await call('harbor-deploy',{pageId:pg.pageId,files:{'index.html':`<!doctype html>… (${(html.length/1024).toFixed(1)} KB)`}},'harbor');
+  showPreview(rep,pg.pageId);
+  await answer(`**Published to Harbor.** Page \`${pg.pageId.slice(0,8)}\` is live for the team.\n- One task, two MCP servers: the agent read the board and wrote to Harbor.\n- The page was built from a single \`sprint_summary\` call, so it matches the board exactly.\n- Nothing was published until you approved it.`)},
 
  async fallback(q){await think(`"${q}" isn't one of my scripted plans in this browser demo.`);
   await answer(`I can **scan risks**, **rebalance owners**, **unblock work** or **draft a status update**. Try one of the prompts below, or ask me the open question in the terminal version, which runs a real model.`)}};
 
-function route(q){q=q.toLowerCase();if(/unblock|encoder|arriv/.test(q))return'unblock';if(/rebalanc|assign|owner|overload|capacity/.test(q))return'rebalance';
+function route(q){q=q.toLowerCase();if(/harbor|publish|post it|share it/.test(q))return'publish';if(/unblock|encoder|arriv/.test(q))return'unblock';if(/rebalanc|assign|owner|overload|capacity/.test(q))return'rebalance';
   if(/report|update|status|leader|exec|friday/.test(q))return'report';if(/risk|track|late|make it|slip|block/.test(q))return'risk';return null}
 async function run(key,text){if(busy)return;busy=true;con.classList.add('busy');add(esc(text),'msg user');await sleep(350);
   try{key?await SCEN[key]():await SCEN.fallback(text)}finally{busy=false;con.classList.remove('busy')}}
@@ -718,7 +822,7 @@ document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>run(c.dataset.s,c.te
 const ask=document.getElementById('ask');
 const submit=()=>{const q=ask.value.trim();if(!q)return;ask.value='';run(route(q),q)};
 document.getElementById('send').onclick=submit;ask.addEventListener('keydown',e=>{if(e.key==='Enter')submit()});
-document.getElementById('resetBtn').onclick=()=>{if(busy)return;resetBoard();log.innerHTML='<div class="msg think">Board reset to the start of the demo.</div>';calls=0;document.getElementById('callCount').textContent='0 tool calls'};
+document.getElementById('resetBtn').onclick=()=>{if(busy)return;resetBoard();document.querySelectorAll('.hwin').forEach(x=>x.remove());log.innerHTML='<div class="msg boot"><span class="gold">READY</span> · board reset to the start of the demo. 27 tools across 2 MCP servers.</div>';calls=0;writes=0;document.getElementById('callCount').textContent='0';document.getElementById('writes').textContent='0'};
 resetBoard();
 </script>
 </body>

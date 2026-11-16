@@ -1,5 +1,8 @@
 # Agents on the critical path: Cal Poly TPM talk
 
+**Slides:** https://discofuchsia.github.io/cal-poly-ai-project-management-agent-and-mcp/  
+**Live demo:** https://discofuchsia.github.io/cal-poly-ai-project-management-agent-and-mcp/#10
+
 - `index.html`: the deck (17 slides). Open it in Chrome and press F for fullscreen. Arrow keys move between slides. It needs no internet.
 - Slide 10 is the in-browser demo: click a prompt chip, approve or deny the writes, and press "reset board" between run-throughs.
 - `demo/`: the real MCP server and agent.

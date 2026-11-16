@@ -1,0 +1,30 @@
+{
+  "project": "Mustang Rover",
+  "description": "Autonomous campus delivery robot (fictional senior project used for this demo)",
+  "sprint": "Sprint 4",
+  "sprint_ends_in_days": 4,
+  "capacity_points_per_person": 10,
+  "team": [
+    {"name": "Maya Chen", "role": "Tech Lead, Autonomy"},
+    {"name": "Diego Ramirez", "role": "Hardware"},
+    {"name": "Priya Patel", "role": "Firmware"},
+    {"name": "Sam Okafor", "role": "App and Backend"},
+    {"name": "Lena Fischer", "role": "QA and Test"}
+  ],
+  "tasks": [
+    {"id": "R-101", "title": "LiDAR driver integration", "assignee": "Priya Patel", "status": "done", "points": 5, "due_in_days": -3, "priority": "high", "depends_on": []},
+    {"id": "R-102", "title": "SLAM map of Dexter Lawn", "assignee": "Maya Chen", "status": "in_progress", "points": 8, "due_in_days": 1, "priority": "high", "depends_on": ["R-101"]},
+    {"id": "R-103", "title": "Path planner v2 (hybrid A*)", "assignee": "Maya Chen", "status": "in_progress", "points": 8, "due_in_days": 3, "priority": "high", "depends_on": ["R-102"]},
+    {"id": "R-104", "title": "Motor controller PID tuning", "assignee": "Diego Ramirez", "status": "blocked", "points": 5, "due_in_days": -1, "priority": "high", "depends_on": [], "blocked_reason": "Waiting on replacement wheel encoder; vendor ship date slipped a week"},
+    {"id": "R-105", "title": "Battery management firmware", "assignee": "Priya Patel", "status": "in_progress", "points": 5, "due_in_days": 2, "priority": "medium", "depends_on": []},
+    {"id": "R-106", "title": "Obstacle avoidance integration test", "assignee": "Lena Fischer", "status": "todo", "points": 5, "due_in_days": 4, "priority": "high", "depends_on": ["R-103", "R-104"]},
+    {"id": "R-107", "title": "Order API and campus geofence", "assignee": "Sam Okafor", "status": "done", "points": 3, "due_in_days": -2, "priority": "medium", "depends_on": []},
+    {"id": "R-108", "title": "Student app: live rover tracking", "assignee": "Sam Okafor", "status": "in_progress", "points": 5, "due_in_days": 4, "priority": "medium", "depends_on": ["R-107"]},
+    {"id": "R-109", "title": "Emergency-stop safety review", "assignee": null, "status": "todo", "points": 3, "due_in_days": 2, "priority": "critical", "depends_on": []},
+    {"id": "R-110", "title": "Weatherproof enclosure CAD", "assignee": "Diego Ramirez", "status": "in_progress", "points": 3, "due_in_days": -2, "priority": "medium", "depends_on": []},
+    {"id": "R-111", "title": "Demo-day run of show", "assignee": "Maya Chen", "status": "todo", "points": 2, "due_in_days": 6, "priority": "low", "depends_on": []},
+    {"id": "R-112", "title": "Telemetry dashboard", "assignee": "Sam Okafor", "status": "todo", "points": 3, "due_in_days": 5, "priority": "low", "depends_on": ["R-108"]},
+    {"id": "R-113", "title": "Field test plan: Kennedy Library route", "assignee": "Lena Fischer", "status": "in_progress", "points": 3, "due_in_days": 3, "priority": "medium", "depends_on": []},
+    {"id": "R-114", "title": "Sensor calibration SOP", "assignee": "Priya Patel", "status": "todo", "points": 2, "due_in_days": 4, "priority": "low", "depends_on": ["R-101"]}
+  ]
+}

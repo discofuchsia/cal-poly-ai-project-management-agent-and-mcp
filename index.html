@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Agents for Technical Project Management · Cal Poly</title>
+<style>
+:root{
+  --green:#154734; --green-d:#0b2a1f; --green-dd:#071c14; --green-l:#2c6e52;
+  --gold:#BD8B13; --gold-l:#F2C75C; --cream:#F6F1E3; --muted:#a9bfb3;
+  --red:#e0614b; --amber:#f0b429; --ok:#5cc489;
+  --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  --sans:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--green-dd);overflow:hidden;font-family:var(--sans);color:var(--cream)}
+#stage{position:absolute;width:1600px;height:900px;left:50%;top:50%;transform-origin:center center}
+.slide{position:absolute;inset:0;padding:80px 100px;opacity:0;pointer-events:none;transition:opacity .5s ease;
+  background:radial-gradient(1200px 700px at 85% -10%,rgba(189,139,19,.18),transparent 60%),
+             radial-gradient(900px 600px at -10% 110%,rgba(44,110,82,.55),transparent 60%),
+             linear-gradient(160deg,var(--green) 0%,var(--green-d) 70%);overflow:hidden}
+.slide::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(242,199,92,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(242,199,92,.05) 1px,transparent 1px);
+  background-size:48px 48px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 80%)}
+.slide.active{opacity:1;pointer-events:auto}
+.slide>*{position:relative}
+.kicker{font:600 18px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-l);margin-bottom:18px}
+h1{font-size:84px;line-height:1.02;font-weight:800;letter-spacing:-.02em}
+h2{font-size:56px;line-height:1.08;font-weight:800;letter-spacing:-.015em;margin-bottom:34px}
+h3{font-size:26px;font-weight:700;margin-bottom:10px}
+p,li{font-size:25px;line-height:1.45;color:#e3eadf}
+.gold{color:var(--gold-l)} .muted{color:var(--muted)}
+.grad{background:linear-gradient(90deg,var(--gold-l),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.footer{position:absolute;left:100px;right:100px;bottom:34px;display:flex;justify-content:space-between;font:500 15px var(--mono);color:rgba(246,241,227,.45);letter-spacing:.06em}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.active .reveal{opacity:1;transform:none}
+.active .d1{transition-delay:.12s}.active .d2{transition-delay:.24s}.active .d3{transition-delay:.36s}.active .d4{transition-delay:.48s}.active .d5{transition-delay:.6s}.active .d6{transition-delay:.72s}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.card{background:rgba(7,28,20,.55);border:1px solid rgba(242,199,92,.18);border-radius:18px;padding:28px 30px;backdrop-filter:blur(4px)}
+.card.goldborder{border-color:rgba(242,199,92,.6);box-shadow:0 0 0 1px rgba(242,199,92,.15),0 20px 60px rgba(0,0,0,.3)}
+.card p{font-size:21px}
+.num{font:800 20px var(--mono);color:var(--green-dd);background:var(--gold-l);width:40px;height:40px;border-radius:12px;display:grid;place-items:center;margin-bottom:16px}
+.pill{display:inline-block;font:600 15px var(--mono);padding:5px 12px;border-radius:999px;background:rgba(242,199,92,.14);color:var(--gold-l);border:1px solid rgba(242,199,92,.35)}
+ul.clean{list-style:none}
+ul.clean li{padding-left:34px;position:relative;margin:12px 0}
+ul.clean li::before{content:"";position:absolute;left:4px;top:15px;width:14px;height:14px;border-radius:4px;background:var(--gold);transform:rotate(45deg)}
+pre.code{font:16px/1.55 var(--mono);background:#06170f;border:1px solid rgba(242,199,92,.2);border-radius:16px;padding:22px 26px;color:#d7e4dc;overflow:hidden;white-space:pre}
+.k{color:#f2c75c}.s{color:#9ee6b8}.c{color:#6f8f80;font-style:italic}.n{color:#ffb38a}.f{color:#8fd3ff}
+
+/* progress */
+#progress{position:fixed;left:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--gold),var(--gold-l));transition:width .4s ease;z-index:10}
+#counter{position:fixed;right:18px;bottom:12px;font:500 13px var(--mono);color:rgba(246,241,227,.4);z-index:10}
+#hint{position:fixed;left:18px;bottom:12px;font:500 13px var(--mono);color:rgba(246,241,227,.35);z-index:10}
+
+/* title */
+.title-wrap{display:flex;flex-direction:column;justify-content:center;height:100%}
+.title-wrap h1{font-size:104px;max-width:1200px}
+.byline{margin-top:46px;display:flex;gap:26px;align-items:center}
+.byline .bar{width:60px;height:4px;background:var(--gold)}
+.byline p{font-size:26px}
+.orbit{position:absolute;right:-120px;top:120px;width:640px;height:640px}
+.orbit circle{fill:none;stroke:rgba(242,199,92,.25)}
+.orbit .dot{fill:var(--gold-l)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{transform-origin:320px 320px;animation:spin 30s linear infinite}
+.spin2{transform-origin:320px 320px;animation:spin 18s linear infinite reverse}
+
+/* ladder */
+.ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;align-items:end}
+.rung{border-radius:20px;padding:30px;border:1px solid rgba(242,199,92,.2);background:rgba(7,28,20,.5)}
+.rung .q{font:15px var(--mono);color:var(--muted);margin:14px 0 6px}
+.rung .ex{font-size:20px;color:var(--cream);font-style:italic}
+.rung.r1{height:330px}.rung.r2{height:400px}.rung.r3{height:480px;border-color:var(--gold);background:linear-gradient(180deg,rgba(189,139,19,.2),rgba(7,28,20,.6))}
+
+/* loop */
+.loopbox{position:relative;width:560px;height:560px}
+.loopnode{position:absolute;width:190px;padding:18px;border-radius:16px;text-align:center;background:#0a2419;border:1px solid rgba(242,199,92,.3);font-weight:700;font-size:22px;animation:glow 8s infinite}
+.loopnode small{display:block;font:500 14px var(--mono);color:var(--muted);margin-top:6px}
+.ln1{left:185px;top:0;animation-delay:0s}.ln2{right:0;top:220px;animation-delay:2s}.ln3{left:185px;bottom:0;animation-delay:4s}.ln4{left:0;top:220px;animation-delay:6s}
+@keyframes glow{0%,20%{border-color:var(--gold-l);box-shadow:0 0 40px rgba(242,199,92,.45);color:var(--gold-l)}25%,100%{border-color:rgba(242,199,92,.3);box-shadow:none;color:var(--cream)}}
+.loopcenter{position:absolute;left:170px;top:205px;width:220px;height:150px;display:grid;place-items:center;text-align:center;font:600 17px var(--mono);color:var(--gold-l)}
+
+/* demo */
+#demo{padding:44px 50px 40px}
+.demo-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.demo-head h2{font-size:38px;margin:0}
+.live{display:flex;gap:10px;align-items:center;font:600 15px var(--mono);color:var(--gold-l)}
+.live i{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 12px var(--red);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.25}}
+.demo-grid{display:grid;grid-template-columns:930px 1fr;gap:22px;height:745px}
+body.ondemo #hint,body.ondemo #counter{display:none}
+.board{background:rgba(5,20,14,.6);border:1px solid rgba(242,199,92,.18);border-radius:18px;padding:16px;display:flex;flex-direction:column}
+.board-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font:600 15px var(--mono);color:var(--muted)}
+.board-top b{color:var(--cream);font-family:var(--sans);font-size:19px}
+.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex:1;min-height:0}
+.col{background:rgba(255,255,255,.03);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+.col-h{font:700 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:4px 4px 6px;display:flex;justify-content:space-between}
+.tcard{background:#0d2c20;border:1px solid rgba(255,255,255,.08);border-left:4px solid var(--green-l);border-radius:9px;padding:8px 10px;font-size:13.5px;line-height:1.3;will-change:transform}
+.tcard.cp{border-left-color:var(--gold-l)}
+.tcard.flash{animation:flash 1.6s ease}
+@keyframes flash{0%,40%{box-shadow:0 0 0 2px var(--gold-l),0 0 30px rgba(242,199,92,.6)}100%{box-shadow:none}}
+.tcard .tid{font:700 11px var(--mono);color:var(--gold-l);display:flex;justify-content:space-between}
+.tcard .tt{margin:3px 0 6px;color:var(--cream);font-weight:600}
+.tcard .meta{display:flex;justify-content:space-between;align-items:center;font:11px var(--mono);color:var(--muted)}
+.av{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font:700 10px var(--sans);color:#06170f}
+.av.none{background:transparent;border:1.5px dashed var(--red);color:var(--red)}
+.due.late{color:var(--red);font-weight:700}.due.soon{color:var(--amber)}
+.team{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px}
+.tm{background:rgba(255,255,255,.03);border-radius:10px;padding:8px 10px;font:12px var(--mono);color:var(--muted)}
+.tm .row{display:flex;align-items:center;gap:7px;color:var(--cream);font:600 13px var(--sans);margin-bottom:6px}
+.meter{height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--ok);transition:width .8s ease,background .8s}
+.console{background:#06170f;border:1px solid rgba(242,199,92,.25);border-radius:18px;display:flex;flex-direction:column;overflow:hidden}
+.con-top{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;justify-content:space-between;font:600 13px var(--mono);color:var(--muted)}
+.con-top span b{color:var(--gold-l)}
+#log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+#log::-webkit-scrollbar{width:6px}#log::-webkit-scrollbar-thumb{background:rgba(242,199,92,.3);border-radius:3px}
+.msg{font-size:15px;line-height:1.5;animation:pop .3s ease}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+.msg.user{align-self:flex-end;background:var(--gold);color:#06170f;font-weight:600;padding:9px 14px;border-radius:14px 14px 2px 14px;max-width:85%}
+.msg.think{font:13px var(--mono);color:var(--muted);display:flex;gap:8px;align-items:center}
+.msg.think::before{content:"◆";color:var(--gold)}
+.tool{font:12.5px var(--mono);background:#0b2419;border:1px solid rgba(92,196,137,.3);border-radius:10px;overflow:hidden}
+.tool .th{padding:7px 11px;display:flex;justify-content:space-between;color:#9ee6b8;cursor:pointer}
+.tool .th .st{color:var(--muted)}
+.tool .th .st.ok{color:var(--ok)}
+.tool pre{display:none;padding:8px 11px;max-height:180px;overflow:auto;color:#b9cdc2;border-top:1px solid rgba(255,255,255,.06);white-space:pre-wrap}
+.tool.open pre{display:block}
+.spinner{display:inline-block;width:10px;height:10px;border:2px solid var(--gold-l);border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-1px}
+.approve{border:1px solid var(--gold-l);background:rgba(189,139,19,.12);border-radius:12px;padding:12px 14px;font-size:14.5px}
+.approve .ah{font:700 12px var(--mono);color:var(--gold-l);letter-spacing:.1em;margin-bottom:6px}
+.approve code{font:12.5px var(--mono);color:#ffd98a}
+.approve .btns{display:flex;gap:8px;margin-top:10px}
+.btn{font:700 13px var(--sans);border:0;border-radius:8px;padding:8px 14px;cursor:pointer}
+.btn.yes{background:var(--gold-l);color:#06170f}.btn.no{background:transparent;color:var(--cream);border:1px solid rgba(255,255,255,.25)}
+.approve.done .btns{display:none}
+.answer{background:rgba(255,255,255,.04);border-radius:12px;padding:12px 15px;font-size:15px;line-height:1.55;color:#e8efe9}
+.answer p{font-size:15px;margin:4px 0}
+.answer ul{margin:4px 0 4px 18px}.answer li{font-size:15px;margin:3px 0}
+.answer code{font:12.5px var(--mono);color:var(--gold-l)}
+.rag{font:800 11px var(--mono);padding:2px 8px;border-radius:6px;color:#06170f;vertical-align:1px}
+.rag.RED{background:var(--red)}.rag.AMBER{background:var(--amber)}.rag.GREEN{background:var(--ok)}
+.chips{padding:10px 12px 0;display:flex;flex-wrap:wrap;gap:7px;border-top:1px solid rgba(255,255,255,.07)}
+.chip{font:600 13px var(--sans);background:rgba(242,199,92,.1);border:1px solid rgba(242,199,92,.35);color:var(--gold-l);border-radius:999px;padding:7px 12px;cursor:pointer;transition:.2s}
+.chip:hover{background:var(--gold-l);color:#06170f}
+.chip:disabled,.busy .chip{opacity:.35;pointer-events:none}
+.inrow{display:flex;gap:8px;padding:10px 12px 12px}
+.inrow input{flex:1;background:#0b2419;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:var(--cream);font:14px var(--sans);outline:none}
+.inrow input:focus{border-color:var(--gold-l)}
+.inrow button{background:var(--gold-l);color:#06170f;border:0;border-radius:10px;padding:0 16px;font-weight:800;cursor:pointer}
+.small{font:12px var(--mono);color:rgba(246,241,227,.4)}
+.reset{background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);border-radius:8px;font:600 12px var(--mono);padding:4px 10px;cursor:pointer}
+
+/* mesh */
+.mesh svg line{stroke:rgba(242,199,92,.45);stroke-width:2}
+.mesh svg rect{fill:#0b2419;stroke:rgba(242,199,92,.4)}
+.mesh svg text{fill:var(--cream);font:600 16px var(--sans);text-anchor:middle}
+.mesh .hub{fill:var(--gold)!important;stroke:var(--gold-l)!important}
+.flow line{stroke-dasharray:6 6;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
+table.week{width:100%;border-collapse:separate;border-spacing:0 10px}
+table.week td{padding:16px 20px;font-size:21px;background:rgba(7,28,20,.55);vertical-align:top}
+table.week td:first-child{border-radius:12px 0 0 12px;font:700 18px var(--mono);color:var(--gold-l);width:220px}
+table.week td:last-child{border-radius:0 12px 12px 0}
+table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:0 20px}
+.section{display:flex;flex-direction:column;justify-content:center;height:100%}
+.section .big{font-size:150px;font-weight:900;letter-spacing:-.04em;line-height:.9}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1 TITLE -->
+<section class="slide" data-title="Title">
+  <svg class="orbit" viewBox="0 0 640 640">
+    <g class="spin"><circle cx="320" cy="320" r="300"/><circle class="dot" cx="320" cy="20" r="9"/><circle class="dot" cx="620" cy="320" r="5"/></g>
+    <g class="spin2"><circle cx="320" cy="320" r="210" stroke-dasharray="4 10"/><circle class="dot" cx="110" cy="320" r="7"/></g>
+    <circle cx="320" cy="320" r="120"/><circle cx="320" cy="320" r="8" class="dot"/>
+  </svg>
+  <div class="title-wrap">
+    <div class="kicker reveal">Cal Poly · Technical Project Management</div>
+    <h1 class="reveal d1">Agents on the<br><span class="grad">critical path.</span></h1>
+    <p class="reveal d2" style="font-size:32px;margin-top:26px;max-width:980px">How AI agents and the Model Context Protocol are changing the way technical programs get run.</p>
+    <div class="byline reveal d3"><div class="bar"></div><p><b>Jules Gerard</b> <span class="muted">· Amazon</span></p></div>
+  </div>
+</section>
+
+<!-- 2 AGENDA -->
+<section class="slide" data-title="Agenda">
+  <div class="kicker reveal">Today</div>
+  <h2 class="reveal d1">What we'll cover</h2>
+  <div class="grid4">
+    <div class="card reveal d2"><div class="num">01</div><h3>Why now</h3><p>Where a TPM's week actually goes, and which parts a machine can carry.</p></div>
+    <div class="card reveal d3"><div class="num">02</div><h3>Agents</h3><p>What makes an agent different from a chatbot: tools, a loop, and a goal.</p></div>
+    <div class="card reveal d4"><div class="num">03</div><h3>MCP</h3><p>The open protocol that plugs agents into your trackers, docs and data.</p></div>
+    <div class="card goldborder reveal d5"><div class="num">04</div><h3>Live demo</h3><p>A PM agent running a real sprint board over MCP. Then: how to build your own.</p></div>
+  </div>
+</section>
+
+<!-- 3 THE TPM WEEK -->
+<section class="slide" data-title="The TPM week">
+  <div class="kicker reveal">The problem</div>
+  <h2 class="reveal d1">A lot of program management is <span class="grad">information logistics.</span></h2>
+  <div class="grid2" style="margin-top:20px">
+    <div class="card reveal d2">
+      <h3 class="muted" style="font-size:20px;letter-spacing:.1em;text-transform:uppercase">Moving information</h3>
+      <ul class="clean">
+        <li>Chasing status across five tools and three time zones</li>
+        <li>Reconciling the tracker with what people actually said</li>
+        <li>Hunting for the blocked dependency before it bites</li>
+        <li>Rewriting the same facts for the team, then for leadership</li>
+      </ul>
+    </div>
+    <div class="card goldborder reveal d3">
+      <h3 class="gold" style="font-size:20px;letter-spacing:.1em;text-transform:uppercase">Making calls</h3>
+      <ul class="clean">
+        <li>Choosing what to cut when the date is fixed</li>
+        <li>Negotiating trade-offs between teams</li>
+        <li>Having the hard conversation early</li>
+        <li>Owning the commitment</li>
+      </ul>
+    </div>
+  </div>
+  <p class="reveal d4" style="margin-top:34px;font-size:28px">Agents are good at the left column. <b class="gold">The right column is still the job.</b></p>
+</section>
+
+<!-- 4 LADDER -->
+<section class="slide" data-title="Chatbot to agent">
+  <div class="kicker reveal">Definitions</div>
+  <h2 class="reveal d1">From chatbot to agent</h2>
+  <div class="ladder">
+    <div class="rung r1 reveal d2"><span class="pill">Chatbot</span><h3 style="margin-top:16px">Answers</h3><p style="font-size:20px">Knows what it was trained on. Can't see your project.</p><div class="q">you ask</div><div class="ex">"What is a critical path?"</div></div>
+    <div class="rung r2 reveal d3"><span class="pill">Copilot</span><h3 style="margin-top:16px">Assists</h3><p style="font-size:20px">Sees what you paste or open. You do every step.</p><div class="q">you ask</div><div class="ex">"Summarize this export I pasted."</div></div>
+    <div class="rung r3 reveal d4"><span class="pill" style="background:var(--gold-l);color:#06170f">Agent</span><h3 style="margin-top:16px">Acts toward a goal</h3><p style="font-size:20px">Plans, calls tools, reads results, and repeats until the goal is met. Asks before it changes anything.</p><div class="q">you ask</div><div class="ex">"Are we going to make Friday? If not, what do I need to decide?"</div></div>
+  </div>
+</section>
+
+<!-- 5 AGENT LOOP -->
+<section class="slide" data-title="Agent loop">
+  <div class="kicker reveal">Anatomy</div>
+  <div class="grid2" style="align-items:center;grid-template-columns:1fr 600px">
+    <div>
+      <h2 class="reveal d1">An agent is a model in a loop, with tools.</h2>
+      <ul class="clean reveal d2">
+        <li><b class="gold">Model</b> does the reasoning and the writing</li>
+        <li><b class="gold">Tools</b> let it read and change the real world</li>
+        <li><b class="gold">Context</b> carries the goal, rules and history</li>
+        <li><b class="gold">Guardrails</b> decide what it may do without asking</li>
+      </ul>
+    </div>
+    <div class="loopbox reveal d3">
+      <div class="loopnode ln1">Plan<small>pick the next step</small></div>
+      <div class="loopnode ln2">Act<small>call a tool</small></div>
+      <div class="loopnode ln3">Observe<small>read the result</small></div>
+      <div class="loopnode ln4">Reflect<small>done? adjust?</small></div>
+      <div class="loopcenter">goal:<br>"is the sprint<br>on track?"</div>
+      <svg style="position:absolute;inset:0" viewBox="0 0 560 560"><circle cx="280" cy="280" r="200" fill="none" stroke="rgba(242,199,92,.35)" stroke-width="2" stroke-dasharray="6 8"><animateTransform attributeName="transform" type="rotate" from="0 280 280" to="360 280 280" dur="16s" repeatCount="indefinite"/></circle></svg>
+    </div>
+  </div>
+</section>
+
+<!-- 6 MCP N x M -->
+<section class="slide" data-title="Why MCP">
+  <div class="kicker reveal">Model Context Protocol</div>
+  <h2 class="reveal d1">MCP turns <span class="gold">N × M</span> integrations into <span class="gold">N + M</span>.</h2>
+  <div class="grid2 mesh">
+    <div class="card reveal d2">
+      <p class="muted" style="font:600 15px var(--mono);letter-spacing:.1em;margin-bottom:10px">BEFORE · EVERY APP WIRES EVERY TOOL</p>
+      <svg viewBox="0 0 600 380" width="100%">
+        <g><line x1="140" y1="70" x2="460" y2="50"/><line x1="140" y1="70" x2="460" y2="140"/><line x1="140" y1="70" x2="460" y2="230"/><line x1="140" y1="70" x2="460" y2="320"/>
+        <line x1="140" y1="190" x2="460" y2="50"/><line x1="140" y1="190" x2="460" y2="140"/><line x1="140" y1="190" x2="460" y2="230"/><line x1="140" y1="190" x2="460" y2="320"/>
+        <line x1="140" y1="310" x2="460" y2="50"/><line x1="140" y1="310" x2="460" y2="140"/><line x1="140" y1="310" x2="460" y2="230"/><line x1="140" y1="310" x2="460" y2="320"/></g>
+        <rect x="30" y="45" width="140" height="50" rx="10"/><text x="100" y="77">Agent A</text>
+        <rect x="30" y="165" width="140" height="50" rx="10"/><text x="100" y="197">Agent B</text>
+        <rect x="30" y="285" width="140" height="50" rx="10"/><text x="100" y="317">Agent C</text>
+        <rect x="440" y="25" width="140" height="50" rx="10"/><text x="510" y="57">Tracker</text>
+        <rect x="440" y="115" width="140" height="50" rx="10"/><text x="510" y="147">Git</text>
+        <rect x="440" y="205" width="140" height="50" rx="10"/><text x="510" y="237">Chat</text>
+        <rect x="440" y="295" width="140" height="50" rx="10"/><text x="510" y="327">Docs</text>
+      </svg>
+      <p style="font-size:21px;margin-top:8px">3 agents × 4 tools = <b class="gold">12 custom integrations</b></p>
+    </div>
+    <div class="card goldborder reveal d3">
+      <p class="gold" style="font:600 15px var(--mono);letter-spacing:.1em;margin-bottom:10px">AFTER · EVERYONE SPEAKS MCP</p>
+      <svg viewBox="0 0 600 380" width="100%" class="flow">
+        <g><line x1="170" y1="70" x2="300" y2="190"/><line x1="170" y1="190" x2="300" y2="190"/><line x1="170" y1="310" x2="300" y2="190"/>
+        <line x1="300" y1="190" x2="440" y2="50"/><line x1="300" y1="190" x2="440" y2="140"/><line x1="300" y1="190" x2="440" y2="230"/><line x1="300" y1="190" x2="440" y2="320"/></g>
+        <rect x="30" y="45" width="140" height="50" rx="10"/><text x="100" y="77">Agent A</text>
+        <rect x="30" y="165" width="140" height="50" rx="10"/><text x="100" y="197">Agent B</text>
+        <rect x="30" y="285" width="140" height="50" rx="10"/><text x="100" y="317">Agent C</text>
+        <circle class="hub" cx="300" cy="190" r="52" fill="#BD8B13"/><text x="300" y="197" style="fill:#06170f;font-weight:800;font-size:20px">MCP</text>
+        <rect x="440" y="25" width="140" height="50" rx="10"/><text x="510" y="57">Tracker</text>
+        <rect x="440" y="115" width="140" height="50" rx="10"/><text x="510" y="147">Git</text>
+        <rect x="440" y="205" width="140" height="50" rx="10"/><text x="510" y="237">Chat</text>
+        <rect x="440" y="295" width="140" height="50" rx="10"/><text x="510" y="327">Docs</text>
+      </svg>
+      <p style="font-size:21px;margin-top:8px">3 + 4 = <b class="gold">7 implementations</b>, and any agent can use any tool</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 MCP ARCH -->
+<section class="slide" data-title="MCP architecture">
+  <div class="kicker reveal">How it works</div>
+  <h2 class="reveal d1">Hosts, clients, servers</h2>
+  <div class="grid3">
+    <div class="card reveal d2"><span class="pill">Host</span><h3 style="margin-top:14px">The agent app</h3><p>Kiro, Claude Desktop, VS Code, your own app. Runs the model and decides when to call a tool.</p></div>
+    <div class="card reveal d3"><span class="pill">Client</span><h3 style="margin-top:14px">One per connection</h3><p>Lives inside the host. Speaks JSON-RPC 2.0 to one server over stdio or HTTP.</p></div>
+    <div class="card goldborder reveal d4"><span class="pill">Server</span><h3 style="margin-top:14px">Wraps a system</h3><p>Your tracker, repo, calendar or database. Publishes what the agent may do, with typed inputs.</p></div>
+  </div>
+  <div class="grid3" style="margin-top:28px">
+    <div class="reveal d4"><p><b class="gold">Tools</b> &nbsp;actions the model can call: <code style="font-family:var(--mono);font-size:20px">update_task</code></p></div>
+    <div class="reveal d5"><p><b class="gold">Resources</b> &nbsp;data the app can read in: files, records, schemas</p></div>
+    <div class="reveal d6"><p><b class="gold">Prompts</b> &nbsp;reusable templates the user can invoke</p></div>
+  </div>
+  <p class="reveal d6 muted" style="margin-top:28px;font-size:21px">Open standard introduced by Anthropic in November 2024 and now supported across many agent hosts. Spec: modelcontextprotocol.io</p>
+</section>
+
+<!-- 8 WIRE -->
+<section class="slide" data-title="On the wire">
+  <div class="kicker reveal">On the wire</div>
+  <h2 class="reveal d1">One tool call is two JSON messages.</h2>
+  <div class="grid2">
+    <div class="reveal d2">
+      <p class="gold" style="font:600 15px var(--mono);margin-bottom:10px">HOST → SERVER</p>
+<pre class="code">{
+  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>,
+  <span class="k">"id"</span>: <span class="n">3</span>,
+  <span class="k">"method"</span>: <span class="s">"tools/call"</span>,
+  <span class="k">"params"</span>: {
+    <span class="k">"name"</span>: <span class="s">"analyze_risks"</span>,
+    <span class="k">"arguments"</span>: {}
+  }
+}</pre>
+      <p style="margin-top:22px;font-size:22px">The model chose this tool because its <b class="gold">name, description and input schema</b> came back from <code style="font-family:var(--mono);font-size:19px">tools/list</code> at startup.</p>
+    </div>
+    <div class="reveal d3">
+      <p class="gold" style="font:600 15px var(--mono);margin-bottom:10px">SERVER → HOST</p>
+<pre class="code">{
+  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>,
+  <span class="k">"id"</span>: <span class="n">3</span>,
+  <span class="k">"result"</span>: {
+    <span class="k">"content"</span>: [{
+      <span class="k">"type"</span>: <span class="s">"text"</span>,
+      <span class="k">"text"</span>: <span class="s">"{ \"risks\": [ {
+        \"severity\": \"high\",
+        \"type\": \"dependency\",
+        \"task\": \"R-106\",
+        \"critical_path\": true
+      }, ... ] }"</span>
+    }]
+  }
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- 9 SECTION DEMO -->
+<section class="slide" data-title="Demo">
+  <div class="section">
+    <div class="kicker reveal">Live demo</div>
+    <div class="big reveal d1">Meet the<br><span class="grad">PM agent.</span></div>
+    <p class="reveal d2" style="margin-top:36px;font-size:28px;max-width:1100px">Project: <b>Mustang Rover</b>, a fictional autonomous campus delivery robot. Five engineers, fourteen tasks, four days left in the sprint. The board sits behind an MCP server with seven tools.</p>
+  </div>
+</section>
+
+<!-- 10 DEMO -->
+<section class="slide" id="demo" data-title="Live demo">
+  <div class="demo-head">
+    <h2>Mustang Rover · <span class="gold">PM agent</span></h2>
+    <div class="live"><i></i> Board connected over MCP · 7 tools</div>
+  </div>
+  <div class="demo-grid">
+    <div class="board">
+      <div class="board-top"><span><b>Sprint 4</b> &nbsp;ends <span id="sprintEnd"></span> · <span id="pct"></span></span><span><span style="color:var(--gold-l)">▌</span> critical path &nbsp; <button class="reset" id="resetBtn">reset board</button></span></div>
+      <div class="cols" id="cols"></div>
+      <div class="team" id="team"></div>
+    </div>
+    <div class="console" id="console">
+      <div class="con-top"><span><b>pm-agent</b> · mustang-rover-board</span><span id="callCount">0 tool calls</span></div>
+      <div id="log"><div class="msg think">Connected. tools/list returned 7 tools. Ask me about the sprint.</div></div>
+      <div class="chips" id="chips">
+        <button class="chip" data-s="risk">What's at risk this sprint?</button>
+        <button class="chip" data-s="rebalance">Fix ownership gaps and rebalance</button>
+        <button class="chip" data-s="unblock">The encoder arrived. Unblock R-104</button>
+        <button class="chip" data-s="report">Draft Friday's leadership update</button>
+      </div>
+      <div class="inrow"><input id="ask" placeholder="Ask the agent anything about the sprint…"><button id="send">→</button></div>
+      <div class="small" style="padding:0 14px 10px">Tool calls run live against the board in this page. The agent's plan is a scripted replay; the full LLM version runs in the terminal.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 UNDER THE HOOD -->
+<section class="slide" data-title="Under the hood">
+  <div class="kicker reveal">Under the hood</div>
+  <h2 class="reveal d1">About 300 lines of Python. No framework.</h2>
+  <div class="grid2" style="grid-template-columns:1.15fr 1fr">
+    <div class="reveal d2">
+      <p class="gold" style="font:600 15px var(--mono);margin-bottom:10px">pm_board_server.py · register a tool</p>
+<pre class="code"><span class="n">TOOLS</span> = {
+  <span class="s">"analyze_risks"</span>: (
+    tool_analyze_risks,
+    <span class="s">"Deterministic risk scan: blocked, overdue,
+     unassigned, blocked dependencies and
+     overloaded people, sorted by severity."</span>,
+    {<span class="s">"type"</span>: <span class="s">"object"</span>, <span class="s">"properties"</span>: {}}),
+  <span class="s">"update_task"</span>: (
+    tool_update_task,
+    <span class="s">"Change status or assignee, or add a note.
+     Writes to the board; ask the human first."</span>,
+    {...}),
+}
+<span class="c"># stdin/stdout loop: initialize, tools/list, tools/call</span>
+<span class="k">for</span> line <span class="k">in</span> sys.stdin:
+    <span class="f">handle</span>(json.loads(line))</pre>
+    </div>
+    <div class="reveal d3">
+      <p class="gold" style="font:600 15px var(--mono);margin-bottom:10px">.kiro/agents/pm-agent.json · the agent</p>
+<pre class="code">{
+  <span class="k">"name"</span>: <span class="s">"pm-agent"</span>,
+  <span class="k">"prompt"</span>: <span class="s">"Ground every claim in a tool
+    result. Cite task IDs. You propose;
+    the human decides..."</span>,
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"mustang-rover-board"</span>: {
+      <span class="k">"command"</span>: <span class="s">"python3"</span>,
+      <span class="k">"args"</span>: [<span class="s">"pm_board_server.py"</span>]
+    }
+  },
+  <span class="k">"allowedTools"</span>: [
+    <span class="c">// reads run freely,</span>
+    <span class="c">// update_task always asks</span>
+  ]
+}</pre>
+      <p style="margin-top:18px;font-size:21px"><code style="font-family:var(--mono);color:var(--gold-l)">kiro-cli chat --agent pm-agent</code></p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 PRINCIPLE -->
+<section class="slide" data-title="Design principle">
+  <div class="kicker reveal">The most important design choice</div>
+  <h2 class="reveal d1" style="font-size:68px;max-width:1300px">Code computes the numbers.<br><span class="grad">The model makes the judgment.</span></h2>
+  <div class="grid2" style="margin-top:30px">
+    <div class="card reveal d2"><h3>Deterministic, in the MCP server</h3><p>Overdue dates, story points, critical path, workload percentages. Same input, same answer, every run. Testable.</p></div>
+    <div class="card goldborder reveal d3"><h3>Probabilistic, in the model</h3><p>Which risk matters most, how to phrase it for an exec, what decision to put in front of the TPM, what to ask next.</p></div>
+  </div>
+  <p class="reveal d4" style="margin-top:30px">Ask a model to add up points and it can be confidently wrong. Ask it to <b class="gold">explain</b> points a tool added up, and it does that well.</p>
+</section>
+
+<!-- 13 GUARDRAILS -->
+<section class="slide" data-title="Guardrails">
+  <div class="kicker reveal">Lessons from running agents on real work</div>
+  <h2 class="reveal d1">Trust is designed in, not hoped for.</h2>
+  <div class="grid3">
+    <div class="card reveal d2"><div class="num">1</div><h3>Agent proposes, human decides</h3><p>Reads run freely. Every write shows the exact change and waits for approval.</p></div>
+    <div class="card reveal d3"><div class="num">2</div><h3>Cite everything</h3><p>Every claim points to a task ID or record, so a reviewer can check it in seconds.</p></div>
+    <div class="card reveal d4"><div class="num">3</div><h3>Least privilege tools</h3><p>Expose <i>update_task</i>, not <i>run_sql</i>. Narrow tools are safer and easier for the model to use correctly.</p></div>
+    <div class="card reveal d4"><div class="num">4</div><h3>Say when evidence is thin</h3><p>"I don't have enough data" is a valid answer. Make the agent say it instead of guessing.</p></div>
+    <div class="card reveal d5"><div class="num">5</div><h3>Measure before you trust</h3><p>Compare the agent's output against answers your experts labeled, before you rely on it.</p></div>
+    <div class="card reveal d6"><div class="num">6</div><h3>Keep an audit trail</h3><p>Log every change: who, what, when, and that an agent did it.</p></div>
+  </div>
+</section>
+
+<!-- 14 WEEK -->
+<section class="slide" data-title="A TPM week">
+  <div class="kicker reveal">In practice</div>
+  <h2 class="reveal d1">Where an agent fits in a sprint</h2>
+  <table class="week reveal d2">
+    <tr><th></th><th>Agent does</th><th>TPM does</th></tr>
+    <tr><td>Planning</td><td>Checks capacity vs. commitments, flags dependency chains</td><td>Sets priorities, negotiates scope</td></tr>
+    <tr><td>Daily</td><td>Scans for new blockers and overdue work before standup</td><td>Unblocks people, has the conversation</td></tr>
+    <tr><td>Mid-sprint</td><td>Recomputes the critical path, proposes reassignments</td><td>Approves or rejects each change</td></tr>
+    <tr><td>Friday</td><td>Drafts the team and leadership updates from the board</td><td>Edits for judgment and tone, sends it</td></tr>
+    <tr><td>Retro</td><td>Pulls what slipped and why from the activity log</td><td>Leads the discussion, picks what changes</td></tr>
+  </table>
+</section>
+
+<!-- 15 SKILLS -->
+<section class="slide" data-title="New TPM skills">
+  <div class="kicker reveal">For your career</div>
+  <h2 class="reveal d1">The skills that compound</h2>
+  <div class="grid2">
+    <ul class="clean reveal d2">
+      <li><b class="gold">Write clear specs for machines.</b> An agent prompt is a requirements doc. Ambiguity shows up as bugs.</li>
+      <li><b class="gold">Think in systems.</b> Decide which steps are deterministic code and which need judgment.</li>
+      <li><b class="gold">Evaluate, don't eyeball.</b> Build a small labeled test set and measure.</li>
+    </ul>
+    <ul class="clean reveal d3">
+      <li><b class="gold">Own the risk call.</b> Know what an agent may change without asking, and defend that line.</li>
+      <li><b class="gold">Learn the plumbing.</b> APIs, JSON, a little Python. Enough to wire one MCP server yourself.</li>
+      <li><b class="gold">Stay close to people.</b> As the logistics get automated, trust and communication carry more of the job.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 16 BUILD YOUR OWN -->
+<section class="slide" data-title="Build your own">
+  <div class="kicker reveal">Your turn</div>
+  <h2 class="reveal d1">Build one this weekend</h2>
+  <div class="grid4">
+    <div class="card reveal d2"><div class="num">1</div><h3>Pick one chore</h3><p>Status digest, risk scan or standup prep. Something you do every week.</p></div>
+    <div class="card reveal d3"><div class="num">2</div><h3>Wrap the data</h3><p>An MCP server with 3–5 narrow tools over your tracker export, or a JSON file.</p></div>
+    <div class="card reveal d4"><div class="num">3</div><h3>Write the rules</h3><p>Prompt: what it may read, what needs approval, how to cite, when to say "not enough data."</p></div>
+    <div class="card goldborder reveal d5"><div class="num">4</div><h3>Test it</h3><p>Write ten questions with known answers. Run them. Fix the tools, not just the prompt.</p></div>
+  </div>
+  <pre class="code reveal d6" style="margin-top:34px;font-size:18px"><span class="c"># everything from today's demo</span>
+python3 demo/pm_board_server.py --reset   <span class="c"># fresh board</span>
+python3 demo/wire_demo.py                 <span class="c"># watch raw MCP messages</span>
+cd demo && kiro-cli chat --agent pm-agent  <span class="c"># talk to the real agent</span></pre>
+</section>
+
+<!-- 17 THANKS -->
+<section class="slide" data-title="Thank you">
+  <svg class="orbit" viewBox="0 0 640 640" style="top:140px">
+    <g class="spin"><circle cx="320" cy="320" r="300"/><circle class="dot" cx="320" cy="20" r="9"/></g>
+    <g class="spin2"><circle cx="320" cy="320" r="210" stroke-dasharray="4 10"/><circle class="dot" cx="530" cy="320" r="7"/></g>
+  </svg>
+  <div class="title-wrap">
+    <div class="kicker reveal">Thank you</div>
+    <h1 class="reveal d1" style="font-size:120px">Learn by doing.<br><span class="grad">Now with agents.</span></h1>
+    <p class="reveal d2" style="margin-top:34px;font-size:32px">Questions?</p>
+    <div class="byline reveal d3"><div class="bar"></div><p><b>Jules Gerard</b> <span class="muted">· Amazon</span></p></div>
+  </div>
+</section>
+
+</div>
+<div id="progress"></div><div id="counter"></div><div id="hint">← → to navigate · F fullscreen</div>
+
+<script>
+/* ---------------- deck ---------------- */
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);document.getElementById('stage').style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener('resize',fit);fit();
+function go(i){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('active',j===cur));
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+  document.getElementById('counter').textContent=`${cur+1} / ${slides.length}`;history.replaceState(null,'','#'+(cur+1));document.body.classList.toggle('ondemo',slides[cur].id==='demo')}
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1)}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1)}
+  if(e.key==='Home')go(0);if(e.key==='End')go(slides.length-1);
+  if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}});
+go((parseInt(location.hash.slice(1))||1)-1);
+
+/* ---------------- board + tools (mirror of pm_board_server.py) ---------------- */
+const SEED={project:"Mustang Rover",sprint:"Sprint 4",sprint_ends_in_days:4,capacity:10,
+ team:[{name:"Maya Chen",role:"Tech Lead, Autonomy",c:"#F2C75C"},{name:"Diego Ramirez",role:"Hardware",c:"#8fd3ff"},{name:"Priya Patel",role:"Firmware",c:"#9ee6b8"},{name:"Sam Okafor",role:"App and Backend",c:"#ffb38a"},{name:"Lena Fischer",role:"QA and Test",c:"#d6b4ff"}],
+ tasks:[
+ {id:"R-101",title:"LiDAR driver integration",assignee:"Priya Patel",status:"done",points:5,d:-3,priority:"high",depends_on:[]},
+ {id:"R-102",title:"SLAM map of Dexter Lawn",assignee:"Maya Chen",status:"in_progress",points:8,d:1,priority:"high",depends_on:["R-101"]},
+ {id:"R-103",title:"Path planner v2 (hybrid A*)",assignee:"Maya Chen",status:"in_progress",points:8,d:3,priority:"high",depends_on:["R-102"]},
+ {id:"R-104",title:"Motor controller PID tuning",assignee:"Diego Ramirez",status:"blocked",points:5,d:-1,priority:"high",depends_on:[],blocked_reason:"Waiting on replacement wheel encoder; vendor ship date slipped a week"},
+ {id:"R-105",title:"Battery management firmware",assignee:"Priya Patel",status:"in_progress",points:5,d:2,priority:"medium",depends_on:[]},
+ {id:"R-106",title:"Obstacle avoidance integration test",assignee:"Lena Fischer",status:"todo",points:5,d:4,priority:"high",depends_on:["R-103","R-104"]},
+ {id:"R-107",title:"Order API and campus geofence",assignee:"Sam Okafor",status:"done",points:3,d:-2,priority:"medium",depends_on:[]},
+ {id:"R-108",title:"Student app: live rover tracking",assignee:"Sam Okafor",status:"in_progress",points:5,d:4,priority:"medium",depends_on:["R-107"]},
+ {id:"R-109",title:"Emergency-stop safety review",assignee:null,status:"todo",points:3,d:2,priority:"critical",depends_on:[]},
+ {id:"R-110",title:"Weatherproof enclosure CAD",assignee:"Diego Ramirez",status:"in_progress",points:3,d:-2,priority:"medium",depends_on:[]},
+ {id:"R-111",title:"Demo-day run of show",assignee:"Maya Chen",status:"todo",points:2,d:6,priority:"low",depends_on:[]},
+ {id:"R-112",title:"Telemetry dashboard",assignee:"Sam Okafor",status:"todo",points:3,d:5,priority:"low",depends_on:["R-108"]},
+ {id:"R-113",title:"Field test plan: Kennedy Library route",assignee:"Lena Fischer",status:"in_progress",points:3,d:3,priority:"medium",depends_on:[]},
+ {id:"R-114",title:"Sensor calibration SOP",assignee:"Priya Patel",status:"todo",points:2,d:4,priority:"low",depends_on:["R-101"]}]};
+let B;
+const STAT=["todo","in_progress","blocked","done"],LABEL={todo:"To do",in_progress:"In progress",blocked:"Blocked",done:"Done"};
+const fmt=d=>{const x=new Date();x.setDate(x.getDate()+d);return x.toLocaleDateString('en-US',{month:'short',day:'numeric'})};
+const byId=()=>Object.fromEntries(B.tasks.map(t=>[t.id,t]));
+const open=()=>B.tasks.filter(t=>t.status!=="done");
+const color=n=>(SEED.team.find(m=>m.name===n)||{}).c||"#888";
+const ini=n=>n?n.split(' ').map(w=>w[0]).join(''):'?';
+function resetBoard(){B=JSON.parse(JSON.stringify(SEED));B.tasks.forEach(t=>t.notes=[]);B.activity=[];render()}
+
+function criticalPath(){const T=byId(),memo={};
+  const L=id=>{if(memo[id])return memo[id];const t=T[id];let best=[0,[]];
+    for(const dep of t.depends_on){if(T[dep]&&T[dep].status!=="done"){const c=L(dep);if(c[0]>best[0])best=c}}
+    return memo[id]=[best[0]+t.points,[...best[1],id]]};
+  let bestc=[0,[]];for(const t of open()){const c=L(t.id);if(c[0]>bestc[0])bestc=c}
+  return{path:bestc[1].map(i=>({id:i,title:T[i].title,assignee:T[i].assignee,status:T[i].status,points:T[i].points})),total_points:bestc[0],sprint_days_left:B.sprint_ends_in_days}}
+function workload(){return B.team.map(m=>{const mine=open().filter(t=>t.assignee===m.name);const p=mine.reduce((a,t)=>a+t.points,0);
+  return{name:m.name,role:m.role,open_points:p,capacity:B.capacity,load_pct:Math.round(100*p/B.capacity),overloaded:p>B.capacity,tasks:mine.map(t=>t.id)}}).sort((a,b)=>b.open_points-a.open_points)}
+function risks(){const T=byId(),cp=new Set(criticalPath().path.map(p=>p.id)),R=[];
+  for(const t of open()){const on=cp.has(t.id);
+    if(t.status==="blocked")R.push({severity:"high",type:"blocked",task:t.id,detail:`${t.title} is blocked: ${t.blocked_reason||"no reason given"}`,critical_path:on});
+    if(t.d<0)R.push({severity:(on||["high","critical"].includes(t.priority))?"high":"medium",type:"overdue",task:t.id,detail:`${t.title} is ${-t.d} day(s) overdue (${t.assignee||"unassigned"})`,critical_path:on});
+    if(!t.assignee)R.push({severity:t.priority==="critical"?"high":"medium",type:"unassigned",task:t.id,detail:`${t.title} (${t.priority}) has no owner and is due in ${t.d} day(s)`,critical_path:on});
+    const w=t.depends_on.filter(x=>T[x]&&T[x].status==="blocked");
+    if(w.length)R.push({severity:"high",type:"dependency",task:t.id,detail:`${t.title} depends on blocked work: ${w.join(", ")}`,critical_path:on});}
+  for(const w of workload())if(w.overloaded)R.push({severity:"medium",type:"overload",task:null,detail:`${w.name} has ${w.open_points} open points against a capacity of ${w.capacity} (${w.load_pct}%)`,critical_path:w.tasks.some(i=>cp.has(i))});
+  const o={high:0,medium:1,low:2};return R.sort((a,b)=>(o[a.severity]-o[b.severity])||(b.critical_path-a.critical_path))}
+const TOOLS={
+  list_tasks:a=>{let r=B.tasks;if(a.status)r=r.filter(t=>t.status===a.status);return{count:r.length,tasks:r.map(({id,title,assignee,status,points,d})=>({id,title,assignee,status,points,due:fmt(d)}))}},
+  get_task:a=>{const t=byId()[a.id];if(!t)throw Error("No task "+a.id);return{...t,due:fmt(t.d)}},
+  update_task:a=>{const t=byId()[a.id];if(!t)throw Error("No task "+a.id);const ch=[];
+    if(a.status){ch.push(`status ${t.status} -> ${a.status}`);t.status=a.status;if(a.status!=="blocked")delete t.blocked_reason}
+    if(a.assignee){ch.push(`assignee ${t.assignee||'unassigned'} -> ${a.assignee}`);t.assignee=a.assignee}
+    if(a.note){t.notes.push(a.note);ch.push("note added")}
+    B.activity.push({task:t.id,changes:ch,by:"pm-agent"});render(t.id);return{updated:t.id,changes:ch}},
+  analyze_risks:()=>({risks:risks()}),
+  critical_path:()=>criticalPath(),
+  team_workload:()=>({workload:workload()}),
+  sprint_summary:()=>{const tot=B.tasks.reduce((a,t)=>a+t.points,0),dn=B.tasks.filter(t=>t.status==="done").reduce((a,t)=>a+t.points,0);
+    return{sprint:B.sprint,days_left:B.sprint_ends_in_days,points_total:tot,points_done:dn,pct_complete:Math.round(100*dn/tot),risks:risks(),critical_path:criticalPath(),recent_activity:B.activity.slice(-10)}}};
+
+/* ---------------- render board with FLIP animation ---------------- */
+function render(flashId){
+  const before={};document.querySelectorAll('.tcard').forEach(el=>before[el.dataset.id]=el.getBoundingClientRect());
+  const cp=new Set(criticalPath().path.map(p=>p.id));
+  document.getElementById('cols').innerHTML=STAT.map(s=>{const ts=B.tasks.filter(t=>t.status===s);
+    return `<div class="col"><div class="col-h"><span>${LABEL[s]}</span><span>${ts.length}</span></div>${ts.map(t=>{
+      const due=t.status==="done"?'<span class="due">done</span>':t.d<0?`<span class="due late">${-t.d}d late</span>`:`<span class="due ${t.d<=2?'soon':''}">due ${fmt(t.d)}</span>`;
+      return `<div class="tcard ${cp.has(t.id)?'cp':''}" data-id="${t.id}"><div class="tid"><span>${t.id}</span><span>${t.priority==='critical'?'<span style="color:var(--red)">CRITICAL</span>':t.points+' pts'}</span></div><div class="tt">${t.title}</div><div class="meta">${t.assignee?`<span class="av" style="background:${color(t.assignee)}" title="${t.assignee}">${ini(t.assignee)}</span>`:'<span class="av none">?</span>'}${due}</div></div>`}).join('')}</div>`}).join('');
+  document.getElementById('team').innerHTML=workload().sort((a,b)=>a.name.localeCompare(b.name)).map(w=>`<div class="tm"><div class="row"><span class="av" style="background:${color(w.name)}">${ini(w.name)}</span>${w.name.split(' ')[0]}</div><div class="meter"><i style="width:${Math.min(100,w.load_pct)}%;background:${w.overloaded?'var(--red)':w.load_pct>=90?'var(--amber)':'var(--ok)'}"></i></div><div style="margin-top:5px">${w.open_points}/${w.capacity} pts</div></div>`).join('');
+  const s=TOOLS.sprint_summary();document.getElementById('sprintEnd').textContent=fmt(B.sprint_ends_in_days);document.getElementById('pct').textContent=`${s.points_done}/${s.points_total} pts done`;
+  document.querySelectorAll('.tcard').forEach(el=>{const b=before[el.dataset.id];if(!b)return;const a=el.getBoundingClientRect();
+    const sc=document.getElementById('stage').getBoundingClientRect().width/1600;const dx=(b.left-a.left)/sc,dy=(b.top-a.top)/sc;
+    if(dx||dy){el.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:700,easing:'cubic-bezier(.2,.8,.2,1)'})}
+    if(el.dataset.id===flashId)el.classList.add('flash')});
+}
+
+/* ---------------- agent console ---------------- */
+const log=document.getElementById('log'),con=document.getElementById('console');let calls=0,busy=false;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function add(html,cls){const d=document.createElement('div');d.className=cls;d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+async function think(t){add(esc(t),'msg think');await sleep(650)}
+async function call(name,args={}){calls++;document.getElementById('callCount').textContent=calls+' tool calls';
+  const el=add(`<div class="th"><span>→ ${name}(${esc(JSON.stringify(args))})</span><span class="st"><span class="spinner"></span></span></div><pre></pre>`,'tool msg');
+  await sleep(500+Math.random()*450);let res,err=false;try{res=TOOLS[name](args)}catch(e){res={error:e.message};err=true}
+  el.querySelector('pre').textContent=JSON.stringify(res,null,2);const st=el.querySelector('.st');st.textContent=err?'error':'✓ result';st.classList.add(err?'x':'ok');
+  el.querySelector('.th').onclick=()=>el.classList.toggle('open');log.scrollTop=log.scrollHeight;await sleep(250);return res}
+function approve(name,args,why){return new Promise(res=>{const el=add(`<div class="ah">APPROVAL NEEDED · WRITE</div><div>${why}</div><div style="margin-top:6px"><code>${name}(${esc(JSON.stringify(args))})</code></div><div class="btns"><button class="btn yes">Approve</button><button class="btn no">Deny</button></div>`,'approve msg');
+  el.querySelector('.yes').onclick=()=>{el.classList.add('done');el.insertAdjacentHTML('beforeend','<div class="small" style="color:var(--ok);margin-top:6px">✓ approved by TPM</div>');res(true)};
+  el.querySelector('.no').onclick=()=>{el.classList.add('done');el.insertAdjacentHTML('beforeend','<div class="small" style="color:var(--red);margin-top:6px">✕ denied by TPM</div>');res(false)}})}
+function md(s){const out=[];let inList=false;
+  for(const line of s.split('\n')){let l=esc(line).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/\[(RED|AMBER|GREEN)\]/g,'<span class="rag $1">$1</span>');
+    if(l.startsWith('- ')){if(!inList){out.push('<ul>');inList=true}out.push('<li>'+l.slice(2)+'</li>')}
+    else{if(inList){out.push('</ul>');inList=false}if(l.trim())out.push('<p>'+l+'</p>')}}
+  if(inList)out.push('</ul>');return out.join('')}
+async function answer(text){const el=add('','answer msg');const words=text.split(/(\s+)/);let shown='';
+  for(let i=0;i<words.length;i+=4){shown+=words.slice(i,i+4).join('');el.innerHTML=md(shown);log.scrollTop=log.scrollHeight;await sleep(28)}el.innerHTML=md(text)}
+const first=n=>n?n.split(' ')[0]:'nobody';
+
+function pickOwner(points){const cp=new Set(criticalPath().path.map(p=>p.id));const T=byId();
+  return workload().filter(w=>!w.overloaded&&w.open_points+points<=w.capacity&&!w.tasks.some(i=>T[i].d<0))
+    .sort((a,b)=>(a.open_points-b.open_points)||(a.tasks.some(i=>cp.has(i))-b.tasks.some(i=>cp.has(i))))[0]}
+
+const SCEN={
+ async risk(){await think("Goal: decide whether Sprint 4 lands. I'll pull the deterministic risk scan first.");
+  const {risks:R}=await call('analyze_risks');
+  await think("Several high risks. Checking whether they sit on the critical path.");
+  const cp=await call('critical_path');
+  await think("Now checking whether the people on that path have room.");
+  const {workload:W}=await call('team_workload');
+  const T=byId(),hi=R.filter(r=>r.severity==='high'),cpHit=R.some(r=>r.critical_path&&r.severity==='high');
+  const rag=cpHit?'RED':hi.length?'AMBER':'GREEN';
+  let s=`**[${rag}] ${rag==='RED'?'Sprint 4 is at risk.':rag==='AMBER'?'Sprint 4 can land, with open risks.':'Sprint 4 is on track.'}** The critical path is ${cp.path.map(p=>p.id).join(' → ')}: ${cp.total_points} points of open work with ${cp.sprint_days_left} days left.\n`;
+  const seen=new Set();for(const r of R){const k=(r.task||r.detail);if(seen.has(k)||seen.size>=5)continue;seen.add(k);s+=`- **${r.task||'Capacity'}** ${r.detail}${r.critical_path?' · critical path':''}\n`}
+  s+=`\n**Decisions for you:**\n`;
+  if(T['R-104'].status==='blocked')s+=`- Escalate the encoder vendor or source a substitute. R-104 gates R-106.\n`;
+  const un=open().filter(t=>!t.assignee);if(un.length)s+=`- Name an owner for ${un.map(t=>t.id).join(', ')} today. I can propose one.\n`;
+  const ov=W.filter(w=>w.overloaded);for(const w of ov)s+=`- ${first(w.name)} is at ${w.load_pct}% and owns critical-path work. Move non-critical tasks off ${first(w.name)}'s plate.\n`;
+  if(!un.length&&!ov.length&&T['R-104'].status!=='blocked')s+=`- None urgent. Keep an eye on ${cp.path.at(-1)?.id||'the path'}.\n`;
+  await answer(s)},
+
+ async rebalance(){await think("Goal: every critical item has an owner and nobody is over capacity. Checking workload.");
+  await call('team_workload');const {risks:R}=await call('analyze_risks');const made=[];
+  for(const t of open().filter(t=>!t.assignee)){const o=pickOwner(t.points);if(!o){await think(`No one has room for ${t.id}. Leaving it for the TPM.`);continue}
+    await think(`${t.id} is ${t.priority} and unowned. ${first(o.name)} has the most room (${o.open_points}/${o.capacity}) with nothing overdue.`);
+    const args={id:t.id,assignee:o.name,note:`Assigned by pm-agent: lowest load and no overdue work`};
+    if(await approve('update_task',args,`Assign <b>${t.id} ${esc(t.title)}</b> to <b>${o.name}</b>.`)){await call('update_task',args);made.push(`${t.id} → ${o.name}`)}
+    else{await think(`Understood. Leaving ${t.id} unassigned.`)}}
+  const cp=new Set(criticalPath().path.map(p=>p.id));
+  for(const w of workload().filter(w=>w.overloaded)){const T=byId();const movable=w.tasks.map(i=>T[i]).filter(t=>!cp.has(t.id)&&t.status==='todo').sort((a,b)=>({low:0,medium:1,high:2,critical:3}[a.priority]-{low:0,medium:1,high:2,critical:3}[b.priority]));
+    const t=movable[0];if(!t){await think(`${first(w.name)} is overloaded, but everything they hold is on the critical path. That's a scope call for the TPM.`);continue}
+    const o=pickOwner(t.points);if(!o)continue;
+    await think(`${first(w.name)} is at ${w.load_pct}%. ${t.id} is ${t.priority} priority and off the critical path, so it can move.`);
+    const args={id:t.id,assignee:o.name,note:`Moved from ${w.name} to free critical-path capacity`};
+    if(await approve('update_task',args,`Move <b>${t.id} ${esc(t.title)}</b> from ${first(w.name)} to <b>${o.name}</b>.`)){await call('update_task',args);made.push(`${t.id} → ${o.name}`)}
+    else await think(`Okay. ${t.id} stays with ${first(w.name)}.`)}
+  const {workload:W}=await call('team_workload');const still=W.filter(w=>w.overloaded);
+  let s=made.length?`**Done. ${made.length} change${made.length>1?'s':''} applied with your approval:**\n${made.map(m=>'- '+m).join('\n')}\n`:`**No changes made.**\n`;
+  s+=still.length?`\n**Still yours to decide:** ${still.map(w=>`${first(w.name)} is at ${w.load_pct}% (${w.tasks.join(', ')})`).join('; ')}. That work is all on the critical path, so the options are pairing, cutting scope, or accepting the risk.`:`\nEveryone is now at or under capacity.`;
+  await answer(s)},
+
+ async unblock(){await think("Checking R-104 before I change anything.");
+  const t=await call('get_task',{id:'R-104'});
+  if(t.status!=='blocked'){await answer(`R-104 is already **${t.status.replace('_',' ')}**. Nothing to change.`);return}
+  const before=risks().length;
+  const args={id:'R-104',status:'in_progress',note:'Replacement encoder arrived; PID tuning resumed'};
+  if(!await approve('update_task',args,`Move <b>R-104 Motor controller PID tuning</b> from blocked to <b>in progress</b> and log the encoder arrival.`)){await answer('Okay, R-104 stays blocked.');return}
+  await call('update_task',args);
+  await think("Re-running the risk scan to see what that unlocked.");
+  const {risks:R}=await call('analyze_risks');
+  await answer(`**R-104 is unblocked.** Open risks went from ${before} to ${R.length}. R-106 (integration test) no longer waits on blocked work.\n- R-104 is still ${-byId()['R-104'].d} day late. Ask Diego for a new finish date so Lena can schedule R-106.\n- Top remaining risk: **${R[0]?.task||'Capacity'}** ${R[0]?.detail||'none'}`)},
+
+ async report(){await think("Pulling one summary so every number in the update comes from the board.");
+  const s=await call('sprint_summary');const hi=s.risks.filter(r=>r.severity==='high'),cpHit=s.risks.some(r=>r.critical_path&&r.severity==='high');
+  const rag=cpHit?'RED':hi.length?'AMBER':'GREEN';const seen=new Set(),top=[];for(const r of hi){if(!seen.has(r.task)){seen.add(r.task);top.push(r)}if(top.length===3)break}
+  let a=`**Mustang Rover · Sprint 4 · Leadership update**\n**Overall: [${rag}]** ${s.points_done} of ${s.points_total} points done (${s.pct_complete}%), ${s.days_left} days left.\n`;
+  a+=`- **Critical path:** ${s.critical_path.path.map(p=>p.id).join(' → ')}, ${s.critical_path.total_points} points open, owned mostly by ${first(s.critical_path.path[0]?.assignee)}.\n`;
+  a+=top.length?`- **Top risks:** ${top.map(r=>`${r.task} ${r.type}`).join('; ')}.\n`:`- **Top risks:** none rated high.\n`;
+  a+=`- **This week:** ${s.recent_activity.length?s.recent_activity.map(x=>`${x.task} ${x.changes[0]}`).join('; '):'no board changes recorded yet'}.\n`;
+  a+=`- **Ask:** ${byId()['R-104'].status==='blocked'?'help escalating the wheel-encoder vendor (gates integration testing).':rag==='GREEN'?'none this week.':'a decision on scope if the critical path does not close by Thursday.'}\n`;
+  a+=`\nEvery number above came from \`sprint_summary\`. Edit the tone, then send.`;
+  await answer(a)},
+
+ async fallback(q){await think(`"${q}" isn't one of my scripted plans in this browser demo.`);
+  await answer(`I can **scan risks**, **rebalance owners**, **unblock work** or **draft a status update**. Try one of the prompts below, or ask me the open question in the terminal version, which runs a real model.`)}};
+
+function route(q){q=q.toLowerCase();if(/unblock|encoder|arriv/.test(q))return'unblock';if(/rebalanc|assign|owner|overload|capacity/.test(q))return'rebalance';
+  if(/report|update|status|leader|exec|friday/.test(q))return'report';if(/risk|track|late|make it|slip|block/.test(q))return'risk';return null}
+async function run(key,text){if(busy)return;busy=true;con.classList.add('busy');add(esc(text),'msg user');await sleep(350);
+  try{key?await SCEN[key]():await SCEN.fallback(text)}finally{busy=false;con.classList.remove('busy')}}
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>run(c.dataset.s,c.textContent));
+const ask=document.getElementById('ask');
+const submit=()=>{const q=ask.value.trim();if(!q)return;ask.value='';run(route(q),q)};
+document.getElementById('send').onclick=submit;ask.addEventListener('keydown',e=>{if(e.key==='Enter')submit()});
+document.getElementById('resetBtn').onclick=()=>{if(busy)return;resetBoard();log.innerHTML='<div class="msg think">Board reset to the start of the demo.</div>';calls=0;document.getElementById('callCount').textContent='0 tool calls'};
+resetBoard();
+</script>
+</body>
+</html>

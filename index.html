@@ -275,6 +275,13 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
 #demo .hbody p,#demo .hbody li{color:#e8ecf4}#demo .hbody code{color:#c9bbff}
 #demo .hbrand{color:#7c5cff;border-bottom:1px solid #263044}
 #demo .stamp{border-color:#2ecc71;color:#2ecc71}
+.flowrow{display:grid;grid-template-columns:1fr 50px 1fr 64px 1fr 74px 1.25fr 50px 1fr;align-items:stretch;margin-top:6px}
+.fbox{background:rgba(7,28,20,.55);border:1px solid rgba(242,199,92,.2);border-radius:16px;padding:16px 16px}
+.fbox.gold{border-color:var(--gold);background:linear-gradient(180deg,rgba(189,139,19,.2),rgba(7,28,20,.6))}
+.fbox h3{font-size:19px;margin:10px 0 6px}.fbox p{font-size:15.5px;line-height:1.4}
+.farrow{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:30px;color:var(--gold-l)}
+.farrow small{font:600 11px var(--mono);color:var(--muted);letter-spacing:.06em}
+body.ondemo2 #hint,body.ondemo2 #counter{display:none}
 </style>
 </head>
 <body>
@@ -303,7 +310,7 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
     <div class="card reveal d2"><div class="num">01</div><h3>Why now</h3><p>Most TPM work is pulling information in and pushing it back out.</p></div>
     <div class="card reveal d3"><div class="num">02</div><h3>Agents</h3><p>Automate the pulls and pushes. Keep the decision in the middle.</p></div>
     <div class="card reveal d4"><div class="num">03</div><h3>MCP</h3><p>The standard pipe that every pull and push goes through.</p></div>
-    <div class="card goldborder reveal d5"><div class="num">04</div><h3>Live demo</h3><p>Two MCP servers, real pulls, approved pushes. Then: build your own.</p></div>
+    <div class="card goldborder reveal d5"><div class="num">04</div><h3>Two live demos</h3><p>A sprint board, then a real-world risk agent with 8 builds. Then: build your own.</p></div>
   </div>
 </section>
 
@@ -591,17 +598,44 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
   <p class="reveal d5" style="margin-top:28px">Ask a model to add up points and it can be confidently wrong. Ask it to <b class="gold">explain</b> points a pull added up, and it does that well.</p>
 </section>
 
+<!-- FIELD -->
+<section class="slide" data-title="From the field">
+  <div class="kicker reveal">From the field · anonymized</div>
+  <h2 class="reveal d1" style="font-size:50px">The real one: an AI risk-review agent<br>built with <span class="grad">Kiro and three MCP servers.</span></h2>
+  <div class="flowrow reveal d2">
+    <div class="fbox"><span class="pill">1 · Intake</span><h3>Team surveys</h3><p>How each team hands assets to vendors and other teams.</p></div>
+    <div class="farrow">→</div>
+    <div class="fbox"><span class="pill">2 · Pipeline</span><h3>Deterministic Python</h3><p>Survey export → clean rows. Hard-stops on bad input. No AI.</p></div>
+    <div class="farrow"><small>push</small>→</div>
+    <div class="fbox"><span class="pill">3 · Records base</span><h3>Airtable</h3><p>Source of truth. Formulas compute every composite and tier.</p></div>
+    <div class="farrow"><small>pull · push</small>⇄</div>
+    <div class="fbox gold"><span class="pill" style="background:var(--gold-l);color:#06170f">4 · Agent</span><h3>Kiro + 14 steering files</h3><p>8 builds: scoring, alignment, maturity, drivers, themes, second opinion, mitigations, summaries.</p></div>
+    <div class="farrow"><small>push</small>→</div>
+    <div class="fbox"><span class="pill">5 · Publish</span><h3>Harbor</h3><p>Dashboards and summaries for reviewers, who decide.</p></div>
+  </div>
+  <div class="grid3 reveal d3" style="margin-top:26px">
+    <div class="card"><h3 style="font-size:22px">Airtable MCP</h3><p>Pulls rows and team answers. Pushes AI fields only, never formulas.</p></div>
+    <div class="card"><h3 style="font-size:22px">Harbor MCP</h3><p>Pushes HTML dashboards and summaries to an internal docs portal.</p></div>
+    <div class="card"><h3 style="font-size:22px">Builder MCP</h3><p>Development tooling only. A hard rule: it is never a scoring input.</p></div>
+  </div>
+</section>
+
+<!-- DEMO 2 -->
+<section class="slide" id="demo2" data-title="Risk agent demo" style="padding:24px 30px">
+  <iframe id="riskFrame" src="risk-demo.html" title="Risk review agent demo" style="width:100%;height:852px;border:0;border-radius:14px;box-shadow:0 40px 120px rgba(0,0,0,.55),0 0 0 1px rgba(124,92,255,.3),0 0 90px rgba(124,92,255,.14);background:#0f1420"></iframe>
+</section>
+
 <!-- 13 GUARDRAILS -->
 <section class="slide" data-title="Guardrails">
-  <div class="kicker reveal">Lessons from running agents on real work</div>
+  <div class="kicker reveal">Lessons from the real agent</div>
   <h2 class="reveal d1">Pulls run free. Pushes earn trust.</h2>
   <div class="grid3">
     <div class="card reveal d2"><div class="num">1</div><h3>Pulls automatic, pushes approved</h3><p>Reads run on their own. Every push shows the exact change and waits for a yes.</p></div>
-    <div class="card reveal d3"><div class="num">2</div><h3>Cite every pull</h3><p>Every claim points to the task ID or record it came from, so a reviewer can check it in seconds.</p></div>
-    <div class="card reveal d4"><div class="num">3</div><h3>Narrow pushes</h3><p>Expose <i>update_task</i>, not <i>run_sql</i>. Narrow tools are safer and easier for the model to use correctly.</p></div>
-    <div class="card reveal d4"><div class="num">4</div><h3>Say when the pull is thin</h3><p>"I don't have enough data" is a valid answer. Make the agent say it instead of guessing.</p></div>
-    <div class="card reveal d5"><div class="num">5</div><h3>Measure before you trust</h3><p>Compare the agent's output against answers your experts labeled, before you rely on it.</p></div>
-    <div class="card reveal d6"><div class="num">6</div><h3>Log every push</h3><p>Who, what, when, and that an agent did it.</p></div>
+    <div class="card reveal d3"><div class="num">2</div><h3>Quote the source</h3><p>Every score quotes the team's own words, so a reviewer can check it in seconds.</p></div>
+    <div class="card reveal d4"><div class="num">3</div><h3>Formulas own the score</h3><p>The agent writes interpretations. The records base computes the tier. The model never overrides it.</p></div>
+    <div class="card reveal d4"><div class="num">4</div><h3>Say when the pull is thin</h3><p>A <i>no-evidence</i> flag beats a guess. Thin answers get flagged, not filled in.</p></div>
+    <div class="card reveal d5"><div class="num">5</div><h3>Measure before you trust</h3><p>We built an expert-labeled gold set and a held-out test split before trusting the output.</p></div>
+    <div class="card reveal d6"><div class="num">6</div><h3>Propose, don't apply</h3><p>Mitigations are drafts marked "pending alignment". A human approves every one.</p></div>
   </div>
 </section>
 
@@ -678,12 +712,13 @@ function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);document.getEle
 addEventListener('resize',fit);fit();
 function go(i){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('active',j===cur));
   document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
-  document.getElementById('counter').textContent=`${cur+1} / ${slides.length}`;history.replaceState(null,'','#'+(cur+1));document.body.classList.toggle('ondemo',slides[cur].id==='demo');if(slides[cur].id==='demo')setTimeout(()=>boot(),450)}
+  document.getElementById('counter').textContent=`${cur+1} / ${slides.length}`;history.replaceState(null,'','#'+(cur+1));document.body.classList.toggle('ondemo',slides[cur].id==='demo');if(slides[cur].id==='demo')setTimeout(()=>boot(),450);document.body.classList.toggle('ondemo2',slides[cur].id==='demo2');if(slides[cur].id==='demo2'){const f=document.getElementById('riskFrame');setTimeout(()=>f.contentWindow&&f.contentWindow.postMessage({demoVisible:true},'*'),300)}}
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;
   if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1)}
   if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1)}
   if(e.key==='Home')go(0);if(e.key==='End')go(slides.length-1);
   if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}});
+addEventListener('message',e=>{const k=e.data&&e.data.deckKey;if(!k)return;if(['ArrowRight','PageDown',' '].includes(k))go(cur+1);if(['ArrowLeft','PageUp'].includes(k))go(cur-1);if(k==='f'||k==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}});
 go((parseInt(location.hash.slice(1))||1)-1);
 
 /* ---------------- board + tools (mirror of pm_board_server.py) ---------------- */

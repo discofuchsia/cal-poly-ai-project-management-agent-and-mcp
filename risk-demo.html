@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Risk Review Agent · demo</title>
+<style>
+:root{--bg:#0f1420;--card:#171e2e;--card2:#1a2236;--ink:#e8ecf4;--muted:#8a94a6;--line:#263044;--accent:#7c5cff;--accent-l:#a993ff;--teal:#2fd4a6;--teal-d:#1f9d7a;--green:#2ecc71;--yellow:#f1c40f;--red:#ff6b5b;--mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;overflow:hidden}
+#stage{position:absolute;width:1540px;height:852px;left:50%;top:50%;transform-origin:center}
+.win{height:100%;border-radius:14px;overflow:hidden;background:var(--bg);border:1px solid var(--line);display:flex;flex-direction:column}
+.wbar{display:flex;align-items:center;gap:12px;height:36px;padding:0 14px;background:#0c111b;border-bottom:1px solid var(--line);font:12px var(--mono);color:var(--muted);flex:none}
+.wbar .dots i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px}
+.wurl{flex:1;max-width:620px;background:var(--card);border:1px solid var(--line);border-radius:7px;padding:4px 12px;color:#c6cedd}
+.wtag{margin-left:auto;font:700 10px var(--mono);letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+.dash{flex:1;padding:14px 18px 16px;display:flex;flex-direction:column;gap:11px;min-height:0}
+.dhead{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.dh1{font-size:23px;font-weight:700;letter-spacing:-.3px;line-height:1.2}
+.dsub{color:var(--muted);font-size:13px}
+.topo{display:flex;align-items:center}
+.node{display:flex;gap:8px;align-items:center;padding:6px 10px;border-radius:11px;background:var(--bg);border:1px solid var(--line);font:10.5px var(--mono);color:var(--muted);transition:.4s}
+.node b{display:block;color:var(--ink);font:700 12px var(--mono)}
+.node i{width:8px;height:8px;border-radius:50%;background:#46564e;flex:none;transition:.4s}
+.node.on{border-color:rgba(31,157,122,.7);box-shadow:0 0 16px rgba(31,157,122,.25)}.node.on i{background:var(--teal);box-shadow:0 0 9px var(--teal)}
+.node.agent.on{border-color:var(--accent);box-shadow:0 0 22px rgba(124,92,255,.4)}.node.agent.on i{background:var(--accent-l)}
+.node.dev{opacity:.55;border-style:dashed}.node.dev i{background:#5a6478}
+.node.hit{animation:hit .45s}@keyframes hit{50%{transform:scale(1.07)}}
+.wire{position:relative;width:46px;height:2px;background:linear-gradient(90deg,rgba(124,92,255,.15),rgba(124,92,255,.6),rgba(124,92,255,.15))}
+.wire.dev{background:repeating-linear-gradient(90deg,#3a4560 0 4px,transparent 4px 8px)}
+.pk{position:absolute;top:-4px;left:0;width:10px;height:10px;border-radius:50%}
+.pk.pull{background:var(--teal);box-shadow:0 0 12px var(--teal)}.pk.push{background:var(--accent);box-shadow:0 0 12px var(--accent-l)}.pk.ack{width:7px;height:7px;top:-3px;background:#fff;box-shadow:0 0 8px #fff}
+.steps{display:flex;gap:6px;flex:none}
+.step{flex:1;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:11.5px;color:var(--muted);transition:.35s;position:relative;overflow:hidden}
+.step b{display:block;font:700 10px var(--mono);letter-spacing:.08em;color:#5a6478;text-transform:uppercase}
+.step.fx{border-style:dashed}
+.step.run{border-color:var(--accent);color:var(--ink);box-shadow:0 0 18px rgba(124,92,255,.35)}.step.run b{color:var(--accent-l)}
+.step.run::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:linear-gradient(90deg,transparent,var(--accent-l),transparent);animation:scan 1s linear infinite}
+@keyframes scan{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.step.done{border-color:rgba(46,204,113,.5);color:var(--ink)}.step.done b{color:var(--green)}
+.step.fx.done b{color:var(--yellow)}
+.dstats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;flex:none}
+.dstat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 14px}
+.dstat .big{font-size:24px;font-weight:700;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1.15}
+.dstat .cap{color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+.dstat.bump{animation:bump .5s}@keyframes bump{40%{transform:translateY(-3px);box-shadow:0 0 0 1px var(--accent),0 0 24px rgba(124,92,255,.35)}}
+.teal{color:var(--teal)}.purple{color:var(--accent-l)}.yellow{color:var(--yellow)}
+.main{display:grid;grid-template-columns:960px 1fr;gap:12px;flex:1;min-height:0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;min-height:0;position:relative;overflow:hidden}
+.ph{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600;padding:10px 14px;border-bottom:1px solid var(--line)}
+.lg{display:inline-block;width:9px;height:9px;border-radius:3px;margin:0 5px 0 10px}.lg.pull{background:var(--teal-d)}.lg.push{background:var(--accent)}.lg.fx{background:var(--yellow)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font:600 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 8px;border-bottom:1px solid var(--line);background:#141a28;position:sticky;top:0}
+th.ai{color:var(--accent-l)}th.fx{color:var(--yellow)}
+td{padding:8px 8px;border-bottom:1px solid #1e2738;vertical-align:middle}
+tr.focus td{background:rgba(124,92,255,.08)}
+td.id{font:700 11.5px var(--mono);color:var(--accent-l)}
+td .h1{font-weight:600;color:var(--ink)}td .h2{color:var(--muted);font-size:11.5px}
+.cell{display:inline-block;min-width:44px;text-align:center;font:700 10.5px var(--mono);padding:3px 7px;border-radius:6px;background:#0f1420;color:#3a4560;border:1px solid #232c3f}
+.cell.pop{animation:pop .5s cubic-bezier(.2,.9,.3,1.4)}@keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:none;opacity:1}}
+.HIGH{background:rgba(255,107,91,.16);color:#ff8a7d;border-color:rgba(255,107,91,.5)}
+.MEDIUM{background:rgba(241,196,15,.14);color:#f5d04a;border-color:rgba(241,196,15,.45)}
+.LOW{background:rgba(46,204,113,.14);color:#5fe39a;border-color:rgba(46,204,113,.45)}
+.ALIGNED{background:rgba(47,212,166,.12);color:var(--teal);border-color:rgba(47,212,166,.4)}
+.DIVERGENT{background:rgba(124,92,255,.16);color:var(--accent-l);border-color:rgba(124,92,255,.5)}
+.flag{display:inline-block;font:600 9.5px var(--mono);padding:2px 6px;border-radius:5px;margin:1px 3px 1px 0;background:rgba(124,92,255,.15);color:#c9bbff;border:1px solid rgba(124,92,255,.35)}
+.theme{font-size:11.5px;color:#c6cedd}
+.tablewrap{overflow:auto;flex:1}
+.below{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 12px;border-top:1px solid var(--line);flex:none}
+.mini{background:#0f1420;border:1px solid #1d2638;border-radius:10px;padding:9px 12px;min-height:86px}
+.mini h4{font:600 10.5px var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.mini .v{font-size:12.5px;color:#c6cedd}
+.mini .v b{color:var(--ink)}
+.mit{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:3px 0;border-bottom:1px dashed #1e2738}
+.mit:last-child{border:0}.mit span:last-child{font:600 10px var(--mono);color:var(--yellow);white-space:nowrap}
+/* console */
+#log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+#log::-webkit-scrollbar{width:6px}#log::-webkit-scrollbar-thumb{background:rgba(124,92,255,.35);border-radius:3px}
+.msg{font-size:13.5px;line-height:1.5;animation:in .3s ease}@keyframes in{from{opacity:0;transform:translateY(5px)}}
+.msg.user{align-self:flex-end;background:var(--accent);color:#fff;font-weight:600;padding:8px 13px;border-radius:13px 13px 2px 13px;max-width:85%}
+.msg.think{font:12px var(--mono);color:var(--muted);display:flex;gap:7px}.msg.think::before{content:"◆";color:var(--accent)}
+.msg.boot{font:12px var(--mono);color:var(--teal);white-space:pre-wrap}.msg.boot b{color:var(--ink)}
+.tool{font:11.5px var(--mono);background:var(--bg);border:1px solid;border-radius:9px;overflow:hidden}
+.tool.pull{border-color:rgba(31,157,122,.55)}.tool.push{border-color:rgba(124,92,255,.7)}.tool.fx{border-color:rgba(241,196,15,.55)}
+.tool .th{padding:6px 10px;display:flex;justify-content:space-between;gap:8px;cursor:pointer}
+.tool.pull .th{color:var(--teal)}.tool.push .th{color:#c9bbff}.tool.fx .th{color:#f5d04a}
+.srvtag{font:700 9.5px var(--mono);padding:1px 6px;border-radius:4px;margin-right:6px}
+.tool.pull .srvtag{background:rgba(31,157,122,.2)}.tool.push .srvtag{background:rgba(124,92,255,.25)}.tool.fx .srvtag{background:rgba(241,196,15,.18)}
+.tool .st{color:var(--muted);white-space:nowrap}.tool .st.ok{color:var(--green)}
+.tool pre{display:none;padding:7px 10px;max-height:170px;overflow:auto;color:#aeb7c6;border-top:1px solid #1e2738;white-space:pre-wrap}
+.tool.open pre{display:block}
+.spinner{display:inline-block;width:9px;height:9px;border:2px solid var(--accent-l);border-right-color:transparent;border-radius:50%;animation:sp .7s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.approve{border:1px solid var(--accent);background:rgba(124,92,255,.1);border-radius:11px;padding:10px 12px;font-size:13px}
+.approve .ah{font:700 11px var(--mono);color:var(--accent-l);letter-spacing:.1em;margin-bottom:5px}
+.approve .btns{display:flex;gap:7px;margin-top:9px}
+.btn{font:700 12.5px inherit;border:0;border-radius:8px;padding:7px 12px;cursor:pointer;font-family:inherit}
+.btn.yes{background:var(--accent);color:#fff}.btn.all{background:transparent;color:var(--accent-l);border:1px solid var(--accent)}.btn.no{background:transparent;color:var(--ink);border:1px solid #3a4560}
+.approve.done .btns{display:none}
+.answer{background:#0e1420;border-left:3px solid var(--accent);border-radius:6px;padding:10px 13px;font-size:13.5px}
+.answer p{margin:3px 0}.answer ul{margin:3px 0 3px 18px}.answer li{margin:2px 0}
+.answer code{font:12px var(--mono);color:#c9bbff}
+.q{display:block;margin:4px 0;padding:6px 10px;border-left:2px solid var(--teal-d);background:rgba(31,157,122,.07);color:#c6cedd;font-style:italic}
+.chips{padding:9px 11px 0;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid var(--line)}
+.chip{font:600 12.5px inherit;font-family:inherit;background:rgba(124,92,255,.1);border:1px solid rgba(124,92,255,.45);color:var(--accent-l);border-radius:999px;padding:6px 11px;cursor:pointer}
+.chip:hover{background:var(--accent);color:#fff}
+.chip.primary{background:var(--accent);color:#fff}
+.busy .chip{opacity:.35;pointer-events:none}
+.small{font:11px var(--mono);color:#5a6478;padding:8px 13px 10px}
+.reset{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:7px;font:600 11px var(--mono);padding:3px 9px;cursor:pointer}
+.hwin{position:absolute;left:50%;top:52%;width:680px;transform:translate(-50%,-50%);background:var(--card);border-radius:13px;overflow:hidden;z-index:9;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(124,92,255,.7),0 0 70px rgba(124,92,255,.3);animation:win .6s cubic-bezier(.2,.9,.25,1.25)}
+@keyframes win{from{opacity:0;transform:translate(-50%,-38%) scale(.84)}}
+.hbar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#0c111b;font:11.5px var(--mono);color:var(--muted)}
+.hbar .url{flex:1;background:var(--bg);border-radius:6px;padding:3px 10px;color:#c6cedd}
+.hx{background:none;border:0;color:var(--muted);cursor:pointer;font-size:15px}
+.hbody{padding:16px 22px 20px;max-height:470px;overflow:auto;font-size:13.5px}
+.hbody .eb{font:700 10.5px var(--mono);letter-spacing:.14em;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:7px;margin-bottom:10px}
+.hbody p,.hbody li{color:var(--ink);margin:3px 0}.hbody ul{margin:3px 0 3px 18px}
+.stamp{position:absolute;right:24px;top:52px;border:3px solid var(--green);color:var(--green);font:900 16px var(--mono);letter-spacing:.14em;padding:3px 9px;border-radius:6px;transform:rotate(-12deg);animation:stamp .45s .5s both cubic-bezier(.2,.9,.3,1.5)}
+@keyframes stamp{from{opacity:0;transform:rotate(-12deg) scale(2.4)}}
+.node,.node b,td.id,th{white-space:nowrap}
+.wire{width:30px}.dhead>div:first-child{min-width:0}.dsub{max-width:640px}
+td{padding:6px 8px}.mini{min-height:0;padding:8px 12px}.below{padding:8px 12px}
+.msg.think{display:block}.msg.think::before{margin-right:7px}
+</style>
+</head>
+<body>
+<div id="stage"><div class="win">
+  <div class="wbar"><span class="dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="wurl">🔒 harbor / page / risk-review-agent · team-aurora</span><span class="wtag">Harbor</span></div>
+  <div class="dash">
+    <div class="dhead">
+      <div><div class="dh1">Risk Review Agent — Team Aurora</div><div class="dsub">Surveys → deterministic pipeline → records base → 8 AI builds → human review</div></div>
+      <div class="topo">
+        <div class="node" id="nRec"><i></i><div><b>records-base</b>Airtable MCP</div></div>
+        <div class="wire" id="wRec"></div>
+        <div class="node agent" id="nAgent"><i></i><div><b>risk-agent</b>Kiro · 14 steering files</div></div>
+        <div class="wire" id="wDocs"></div>
+        <div class="node" id="nDocs"><i></i><div><b>harbor-docs</b>Harbor MCP</div></div>
+        <div class="wire dev"></div>
+        <div class="node dev" id="nDev"><i></i><div><b>builder-mcp</b>dev only · never scores</div></div>
+      </div>
+    </div>
+    <div class="steps" id="steps"></div>
+    <div class="dstats">
+      <div class="dstat" id="sRows"><div class="big">6</div><div class="cap">Handoffs in scope</div></div>
+      <div class="dstat" id="sPulls"><div class="big teal" id="nPulls">0</div><div class="cap">Automated pulls</div></div>
+      <div class="dstat" id="sPushes"><div class="big purple" id="nPushes">0</div><div class="cap">AI fields pushed (approved)</div></div>
+      <div class="dstat" id="sFx"><div class="big yellow" id="nFx">0</div><div class="cap">Tiers computed by formula</div></div>
+      <div class="dstat" id="sFlags"><div class="big" id="nFlags">0</div><div class="cap">Flags for reviewers</div></div>
+    </div>
+    <div class="main">
+      <div class="panel" id="basePanel">
+        <div class="ph"><span>Records base · Handoffs · pulled from records-base</span><span><i class="lg pull"></i>survey data <i class="lg push"></i>AI field <i class="lg fx"></i>formula <button class="reset" id="resetBtn">reset</button></span></div>
+        <div class="tablewrap"><table id="tbl"></table></div>
+        <div class="below">
+          <div class="mini"><h4>Team process maturity · Build 3</h4><div class="v" id="maturity">Not scored yet.</div></div>
+          <div class="mini"><h4>Risk themes → mitigation drafts · Builds 5 + 7</h4><div class="v" id="mitig">Not drafted yet.</div></div>
+        </div>
+      </div>
+      <div class="panel" id="console">
+        <div class="ph"><span>risk-agent · MCP host</span><span><i class="lg pull"></i>pull <i class="lg push"></i>push <i class="lg fx"></i>formula</span></div>
+        <div id="log"></div>
+        <div class="chips">
+          <button class="chip primary" data-s="run">▶ Run all 8 builds</button>
+          <button class="chip" data-s="why">Why is H-05 flagged?</button>
+          <button class="chip" data-s="publish">Push · publish team summary to Harbor</button>
+        </div>
+        <div class="small">Fictional team and data. Modeled on a real Kiro agent: 8 builds, 14 steering files, records base over Airtable MCP, publishing over Harbor MCP. Calls are simulated in this page.</div>
+      </div>
+    </div>
+  </div>
+</div></div>
+<script>
+function fit(){const s=Math.min(innerWidth/1540,innerHeight/852);document.getElementById('stage').style.transform=`translate(-50%,-50%) scale(${s})`}
+addEventListener('resize',fit);fit();
+addEventListener('keydown',e=>{if(parent!==window&&['ArrowRight','ArrowLeft','PageDown','PageUp',' ','f','F'].includes(e.key)){parent.postMessage({deckKey:e.key},'*');e.preventDefault()}});
+
+/* ---------- fictional data, structured like the real records base ---------- */
+const SEED=[
+ {id:'H-01',asset:'Daily footage',dest:'Vendor A · color',tool:'FileDrop Pro',dd:{access:'Named users only',storage:'Vendor cloud',retention:'30 days'},
+  text:'Links are shared with the vendor\'s whole team so they can move fast. Files sit in their cloud until the project wraps.'},
+ {id:'H-02',asset:'Rough cut',dest:'Internal editorial',tool:'Team NAS',dd:{access:'Named users only',storage:'Company storage',retention:'Project end'},
+  text:'Watermarked per editor; access is limited to named editors and reviewed every month.'},
+ {id:'H-03',asset:'Final masters',dest:'Vendor B · localization',tool:'SecureTransfer',dd:{access:'Named users only',storage:'Vendor on-prem',retention:'Not specified'},
+  text:'Encrypted transfer to named vendor staff. The vendor deletes files after delivery as requested.'},
+ {id:'H-04',asset:'Marketing stills',dest:'Agency C',tool:'Email',dd:{access:'Distribution list',storage:'Email',retention:'Not specified'},
+  text:'We email stills to the agency list today. We plan to move to the secure portal next quarter.'},
+ {id:'H-05',asset:'VFX plates',dest:'Vendor D · VFX',tool:'CloudShare X (not approved)',dd:{access:'Named users only',storage:'Third-party SaaS',retention:'90 days'},
+  text:'CloudShare X is required by the vendor\'s render pipeline; there is no alternative they can accept.'},
+ {id:'H-06',asset:'Script drafts',dest:'Internal writers room',tool:'DocsHub',dd:{access:'Named users only',storage:'Company storage',retention:'30 days'},
+  text:'Every draft is watermarked per recipient and access expires after 30 days.'}];
+const AI={ // what Build 1/2/4/5/6/8 conclude for each row; every level quotes the team's words
+ 'H-01':{access:'HIGH',storage:'MEDIUM',retention:'MEDIUM',align:'DIVERGENT',pct:40,flags:['inconsistency'],quote:'Links are shared with the vendor\'s whole team',driver:'Links go to the whole vendor team, not named users; files stay in vendor cloud until wrap.',theme:'Over-shared access',holistic:'AGREES'},
+ 'H-02':{access:'LOW',storage:'LOW',retention:'LOW',align:'ALIGNED',pct:100,flags:[],quote:'access is limited to named editors and reviewed every month',driver:'Named editors, watermarked, monthly access review.',theme:'—',holistic:'AGREES'},
+ 'H-03':{access:'LOW',storage:'MEDIUM',retention:'HIGH',align:'ALIGNED',pct:90,flags:['no-evidence'],quote:'deletes files after delivery as requested',driver:'No retention period or deletion proof given; High only because the survey has no detail.',theme:'Undefined retention',holistic:'AGREES'},
+ 'H-04':{access:'HIGH',storage:'HIGH',retention:'HIGH',align:'ALIGNED',pct:95,flags:['aspirational'],quote:'We plan to move to the secure portal next quarter',driver:'Email to a distribution list today; the secure portal is planned, not in place.',theme:'Unapproved channels',holistic:'AGREES'},
+ 'H-05':{access:'LOW',storage:'HIGH',retention:'MEDIUM',align:'ALIGNED',pct:100,flags:['verify-approval','business-need'],quote:'CloudShare X is required by the vendor\'s render pipeline',driver:'Unapproved third-party SaaS holds plates for 90 days; the team says the vendor requires it.',theme:'Unapproved channels',holistic:'DIFFERS'},
+ 'H-06':{access:'LOW',storage:'LOW',retention:'LOW',align:'ALIGNED',pct:100,flags:[],quote:'access expires after 30 days',driver:'Per-recipient watermark and 30-day expiry.',theme:'—',holistic:'AGREES'}};
+const W={access:.4,storage:.35,retention:.25},LV={LOW:1,MEDIUM:2,HIGH:3};
+const tierOf=c=>c>=2.4?'HIGH':c>=1.7?'MEDIUM':'LOW';
+const STEPS=[['B1','Interpretive scoring'],['B2','Alignment check'],['B3','Process maturity'],['ƒx','Formula: composite + tier'],['B4','Risk drivers'],['B5','Risk themes'],['B6','Holistic read'],['B7','Mitigation drafts'],['B8','Executive summary']];
+
+let R,pulls=0,pushes=0,fx=0,flags=0,busy=false,autoOK=false,booted=false;
+const $=id=>document.getElementById(id),log=$('log'),con=$('console');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function reset(){R=SEED.map(r=>({...r,ai:{}}));pulls=pushes=fx=flags=0;['nPulls','nPushes','nFx','nFlags'].forEach(i=>$(i).textContent='0');
+  $('maturity').textContent='Not scored yet.';$('mitig').textContent='Not drafted yet.';document.querySelectorAll('.hwin').forEach(x=>x.remove());
+  $('steps').innerHTML=STEPS.map(([k,n],i)=>`<div class="step ${k==='ƒx'?'fx':''}" id="st${i}"><b>${k==='ƒx'?'ƒx · deterministic':'Build '+k.slice(1)}</b>${n}</div>`).join('');render()}
+const cell=(v,cls)=>v?`<span class="cell ${cls||v} pop">${v}</span>`:'<span class="cell">—</span>';
+function render(){$('tbl').innerHTML=`<tr><th>ID</th><th>Handoff</th><th>Tool</th><th class="ai">Access</th><th class="ai">Storage</th><th class="ai">Retention</th><th class="ai">Alignment</th><th class="fx">Tier ƒx</th><th class="ai">Theme</th><th class="ai">Flags</th></tr>`+
+  R.map(r=>{const a=r.ai;return `<tr id="row-${r.id}"><td class="id">${r.id}</td><td><div class="h1">${r.asset}</div><div class="h2">→ ${r.dest}</div></td><td class="h2" style="color:#c6cedd">${r.tool}</td>
+  <td>${cell(a.access)}</td><td>${cell(a.storage)}</td><td>${cell(a.retention)}</td><td>${a.align?`<span class="cell ${a.align} pop">${a.pct}%</span>`:cell()}</td>
+  <td>${a.tier?`<span class="cell ${a.tier} pop">${a.tier} ${a.comp.toFixed(2)}</span>`:cell()}</td><td class="theme">${a.theme||'<span class="cell">—</span>'}</td><td>${(a.flags||[]).map(f=>`<span class="flag">${f}</span>`).join('')}</td></tr>`}).join('')}
+function focusRow(id){document.querySelectorAll('tr.focus').forEach(x=>x.classList.remove('focus'));const t=$('row-'+id);if(t){t.classList.add('focus');t.scrollIntoView({block:'nearest',behavior:'smooth'})}}
+function bump(id,v,tile){$(id).textContent=v;const t=$(tile);t.classList.remove('bump');void t.offsetWidth;t.classList.add('bump')}
+function add(html,cls){const d=document.createElement('div');d.className=cls;d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+async function think(t){add(esc(t),'msg think');await sleep(520)}
+function packet(wire,leftward,cls){const w=$(wire);const d=document.createElement('div');d.className='pk '+cls;w.appendChild(d);const L=w.offsetWidth-10;
+  const a=d.animate([{transform:`translateX(${leftward?L:0}px)`},{transform:`translateX(${leftward?0:L}px)`}],{duration:340,easing:'ease-in-out'});return Promise.race([a.finished,sleep(400)]).then(()=>d.remove())}
+function hit(id){const n=$(id);n.classList.remove('hit');void n.offsetWidth;n.classList.add('hit')}
+async function call(kind,srv,name,args,result){ // kind: pull | push | fx
+  const wire=srv==='docs'?'wDocs':'wRec',left=srv!=='docs';
+  const el=add(`<div class="th"><span><span class="srvtag">${kind==='fx'?'ƒx · formula':kind.toUpperCase()+' · '+(srv==='docs'?'harbor':'records')}</span>${name}(${esc(JSON.stringify(args))})</span><span class="st"><span class="spinner"></span></span></div><pre></pre>`,'tool msg '+kind);
+  if(kind!=='fx'){await packet(wire,left,kind==='push'?'push':'ack');hit(srv==='docs'?'nDocs':'nRec')}
+  await sleep(160+Math.random()*220);const res=typeof result==='function'?result():result;
+  if(kind!=='fx'){await packet(wire,!left,kind==='push'?'ack':'pull');hit('nAgent')}
+  el.querySelector('pre').textContent=JSON.stringify(res,null,2);const st=el.querySelector('.st');st.textContent='✓';st.classList.add('ok');el.querySelector('.th').onclick=()=>el.classList.toggle('open');
+  if(kind==='pull')bump('nPulls',++pulls,'sPulls');log.scrollTop=log.scrollHeight;return res}
+function approve(what){if(autoOK){add(`<span style="color:var(--green)">✓ auto-approved:</span> ${what}`,'msg think');return Promise.resolve(true)}
+  return new Promise(res=>{const el=add(`<div class="ah">PUSH · NEEDS YOUR APPROVAL</div><div>${what}</div><div class="btns"><button class="btn yes">Approve</button><button class="btn all">Approve all for this run</button><button class="btn no">Deny</button></div>`,'approve msg');
+  const done=(ok,txt,col)=>{el.classList.add('done');el.insertAdjacentHTML('beforeend',`<div style="font:11px var(--mono);color:${col};margin-top:5px">${txt}</div>`);res(ok)};
+  el.querySelector('.yes').onclick=()=>done(true,'✓ approved by reviewer','var(--green)');
+  el.querySelector('.all').onclick=()=>{autoOK=true;done(true,'✓ approved · auto-approve on for this run','var(--green)')};
+  el.querySelector('.no').onclick=()=>done(false,'✕ denied','var(--red)')})}
+function md(s){const out=[];let ul=false;for(const line of s.split('\n')){let l=esc(line).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/^&gt; (.*)$/,'<span class="q">“$1”</span>');
+  if(l.startsWith('- ')){if(!ul){out.push('<ul>');ul=true}out.push('<li>'+l.slice(2)+'</li>')}else{if(ul){out.push('</ul>');ul=false}if(l.trim())out.push(l.startsWith('<span class="q"')?l:'<p>'+l+'</p>')}}if(ul)out.push('</ul>');return out.join('')}
+async function answer(t){const el=add('','answer msg');const w=t.split(/(\s+)/);let s='';for(let i=0;i<w.length;i+=5){s+=w.slice(i,i+5).join('');el.innerHTML=md(s);log.scrollTop=log.scrollHeight;await sleep(22)}el.innerHTML=md(t)}
+function step(i,state){const e=$('st'+i);e.classList.remove('run','done');if(state)e.classList.add(state)}
+async function pushFields(field,rows,build){if(!await approve(`Write <b>${field}</b> for ${rows.length} handoff${rows.length>1?'s':''} to the records base (${build}). AI fields only; formulas stay untouched.`))return false;
+  await call('push','rec','update_records',{table:'Handoffs',fields:[field],records:rows.length},{updated:rows.length,field});bump('nPushes',pushes+=rows.length,'sPushes');return true}
+
+async function boot(){if(booted)return;booted=true;busy=true;con.classList.add('busy');
+  const L=async(t,ms=230)=>{add(t,'msg boot');await sleep(ms)};
+  await L('▸ risk-agent starting · loading 14 steering files (rubric, 8 builds, records map)');
+  await L('▸ connect <b>records-base</b> (Airtable MCP)');await packet('wRec',true,'ack');await packet('wRec',false,'pull');$('nRec').classList.add('on');
+  await L('  tools/list ✓ · list_records, get_record, search_records · update_records');
+  await L('▸ connect <b>harbor-docs</b> (Harbor MCP)');await packet('wDocs',false,'ack');await packet('wDocs',true,'pull');$('nDocs').classList.add('on');
+  await L('  tools/list ✓ · 20 tools · harbor-create-page, harbor-deploy, …');
+  await L('▸ <b>builder-mcp</b> attached for development only. It is never a scoring input.');$('nAgent').classList.add('on');
+  await L('▸ rules: AI proposes, formulas compute the tier, humans decide · every score cites the team\'s words');
+  await L('<b style="color:var(--accent-l)">READY</b> · press ▶ Run all 8 builds',0);busy=false;con.classList.remove('busy')}
+
+const SCEN={
+ async run(){autoOK=false;if(R.some(r=>r.ai.access))reset();
+  await think('Pulling the team\'s handoffs from the records base.');
+  await call('pull','rec','list_records',{table:'Handoffs',filter:'team = Aurora'},{records:R.map(r=>({id:r.id,asset:r.asset,dest:r.dest,tool:r.tool,dropdowns:r.dd,free_text:r.text}))});
+  // B1
+  step(0,'run');await think('Build 1: reading each free-text answer and scoring access, storage and retention. Every level quotes the team.');
+  for(const r of R){focusRow(r.id);const a=AI[r.id];Object.assign(r.ai,{access:a.access,storage:a.storage,retention:a.retention});render();focusRow(r.id);await sleep(260)}
+  if(!await pushFields('Interpretive levels + citations',R,'Build 1')){await answer('Stopped. Nothing was written.');step(0);return}step(0,'done');
+  // B2
+  step(1,'run');await think('Build 2: does each dropdown agree with the free text? Missing detail counts as aligned, not divergent.');
+  for(const r of R){const a=AI[r.id];r.ai.align=a.align;r.ai.pct=a.pct;r.ai.flags=[...a.flags];render();await sleep(160)}
+  flags=R.reduce((n,r)=>n+r.ai.flags.length,0);bump('nFlags',flags,'sFlags');
+  await pushFields('Alignment % + flags',R,'Build 2');step(1,'done');
+  // B3
+  step(2,'run');await think('Build 3: team-level process maturity, cross-checked against the actual handoffs. Scored separately, never blended into a row.');
+  await call('pull','rec','get_record',{table:'Team intake',team:'Aurora'},{process_answers:4,policies_named:2});
+  $('maturity').innerHTML='<b>Developing.</b> Written policy exists for internal handoffs, but 3 of 6 external handoffs rely on vendor-side controls the team cannot show.';
+  await pushFields('Process maturity',[{}],'Build 3');step(2,'done');
+  // fx
+  step(3,'run');await think('Composite and tier are computed by the base\'s formula, not by me. I only read the result back.');
+  const res=await call('fx','rec','formula: composite = Σ weight × level',{weights:W},()=>{R.forEach(r=>{r.ai.comp=W.access*LV[r.ai.access]+W.storage*LV[r.ai.storage]+W.retention*LV[r.ai.retention];r.ai.tier=tierOf(r.ai.comp)});return R.map(r=>({id:r.id,composite:+r.ai.comp.toFixed(2),tier:r.ai.tier}))});
+  for(const r of R){render();await sleep(120)}bump('nFx',fx=R.length,'sFx');
+  await call('pull','rec','list_records',{table:'Handoffs',fields:['Composite','Tier']},res);step(3,'done');
+  // B4
+  step(4,'run');await think('Build 4: one plain-English list of every risk driver, recorded and interpreted.');
+  await pushFields('Risk drivers',R,'Build 4');step(4,'done');
+  // B5
+  step(5,'run');await think('Build 5: clustering similar handoffs into cross-team risk themes for the risk register.');
+  for(const r of R){r.ai.theme=AI[r.id].theme;render();await sleep(140)}
+  await pushFields('Risk theme',R.filter(r=>AI[r.id].theme!=='—'),'Build 5');step(5,'done');
+  // B6
+  step(6,'run');await think('Build 6: a whole-row second opinion. It can disagree with the formula, but it never overwrites the tier.');
+  const diff=R.filter(r=>AI[r.id].holistic==='DIFFERS');
+  await pushFields('Holistic read',R,'Build 6');step(6,'done');
+  // B7
+  step(7,'run');await think('Build 7: one propose-only mitigation per risk theme. Status starts as Pending team alignment; I never apply it.');
+  $('mitig').innerHTML=[['Over-shared access','Named-user links with expiry for vendor shares'],['Unapproved channels','Move stills to the secure portal; review CloudShare X with security'],['Undefined retention','Add a retention period and deletion receipt to vendor terms']].map(([t,m])=>`<div class="mit"><span><b>${t}</b> · ${m}</span><span>PENDING</span></div>`).join('');
+  await pushFields('Mitigation drafts',[{},{},{}],'Build 7');step(7,'done');
+  // B8
+  step(8,'run');await think('Build 8: each handoff\'s TLDR. It only restates; it never rescores.');
+  await pushFields('Executive summary',R,'Build 8');step(8,'done');focusRow('H-05');
+  const hi=R.filter(r=>r.ai.tier==='HIGH');
+  await answer(`**All 8 builds done for Team Aurora.** ${hi.length} of 6 handoffs are High risk by formula: ${hi.map(r=>r.id).join(', ')}.
+- **${pulls} automated pulls, ${pushes} AI fields pushed**, each push approved. The tier came from the formula (${fx} rows), not the model.
+- **${flags} flags** for reviewers: inconsistency (H-01), no-evidence (H-03), aspirational (H-04), verify-approval + business-need (H-05).
+- **Holistic read differs on ${diff.map(r=>r.id).join(', ')||'none'}**: the formula says ${diff[0]?diff[0].ai.tier:''}, the second opinion flags it for a human look. The tier is not changed.
+- **3 risk themes** with propose-only mitigations, all Pending team alignment.`)},
+
+ async why(){if(!R.find(r=>r.id==='H-05').ai.tier){await answer('Run the builds first. I only explain scores that exist.');return}
+  focusRow('H-05');await call('pull','rec','get_record',{table:'Handoffs',id:'H-05'},()=>{const r=R.find(r=>r.id==='H-05');return{id:r.id,levels:{access:r.ai.access,storage:r.ai.storage,retention:r.ai.retention},composite:+r.ai.comp.toFixed(2),tier:r.ai.tier,flags:r.ai.flags}});
+  const r=R.find(r=>r.id==='H-05');
+  await answer(`**H-05 VFX plates → Vendor D is ${r.ai.tier==='HIGH'?'High':r.ai.tier==='MEDIUM'?'Medium':'Low'} risk (${r.ai.comp.toFixed(2)}, computed by formula).**
+- **Storage: High.** The plates sit in an unapproved third-party SaaS for 90 days. The team says:
+> ${AI['H-05'].quote}
+- **Flags:** \`verify-approval\` (a reviewer confirms the tool's standing) and \`business-need\` (the level stays High; the mitigation must keep the vendor's need met).
+- **Holistic read: DIFFERS.** The second opinion sees a single strong control (named users) against one severe gap, and asks a human to look. It does not change the tier.
+- **Mitigation (draft, pending):** review CloudShare X with security before the next delivery.`)},
+
+ async publish(){if(!R.some(r=>r.ai.tier)){await answer('Run the builds first, so the summary has scores to restate.');return}
+  await think('Building the team summary from the records base, then pushing it to Harbor through the second MCP server.');
+  const hi=R.filter(r=>r.ai.tier==='HIGH');
+  await call('pull','rec','list_records',{table:'Handoffs',fields:['Tier','Theme','Executive summary']},{rows:R.length,high:hi.map(r=>r.id)});
+  if(!await approve('Publish the <b>Team Aurora risk summary</b> to Harbor as a new page.'))return;
+  const pg=await call('push','docs','harbor-create-page',{title:'Team Aurora · risk summary',slug:'team-aurora-risk-summary'},{pageId:crypto.randomUUID?crypto.randomUUID():'5f1c2b7e-0000-4000-8000-000000000000'});
+  await call('push','docs','harbor-deploy',{pageId:pg.pageId.slice(0,8)+'…',files:['index.html']},{status:'live',version:1});bump('nPushes',pushes+=2,'sPushes');
+  const w=document.createElement('div');w.className='hwin';w.innerHTML=`<div class="hbar"><span>● ● ●</span><span class="url">🔒 harbor / page / ${pg.pageId.slice(0,8)}…</span><button class="hx">✕</button></div><div class="hbody"><div class="eb">TEAM AURORA · RISK SUMMARY · AI-PROPOSED, HUMAN-REVIEWED</div>${md(`**Overall: ${hi.length} of 6 handoffs High risk** (${hi.map(r=>r.id).join(', ')}). Team process maturity: **Developing**.
+- **Over-shared access:** daily footage links go to the whole vendor team (H-01).
+- **Unapproved channels:** stills by email (H-04); VFX plates in an unapproved SaaS the vendor requires (H-05).
+- **Undefined retention:** no retention period or deletion proof for final masters (H-03).
+- **Proposed mitigations:** 3 drafts, all Pending team alignment. Nothing has been applied.
+- **Evidence:** every level cites the team's own survey words; tiers are computed by formula.`)}</div><div class="stamp">PUBLISHED</div>`;
+  $('basePanel').appendChild(w);w.querySelector('.hx').onclick=()=>w.remove();
+  await answer(`**Published to Harbor.** One pull from the records base, two pushes to Harbor, one approval. The page restates the builds; it adds no new scores.`)}};
+
+async function run(k,label){if(busy)return;busy=true;con.classList.add('busy');add(esc(label),'msg user');await sleep(250);try{await SCEN[k]()}finally{busy=false;con.classList.remove('busy')}}
+document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>run(c.dataset.s,c.textContent.replace('▶ ','')));
+$('resetBtn').onclick=()=>{if(busy)return;reset();log.innerHTML='<div class="msg boot"><b style="color:var(--accent-l)">READY</b> · records reset. Press ▶ Run all 8 builds.</div>'};
+reset();
+const io=()=>{if(!booted)setTimeout(boot,300)};
+if(parent===window)io();else addEventListener('message',e=>{if(e.data&&e.data.demoVisible)io()});
+</script>
+</body>
+</html>

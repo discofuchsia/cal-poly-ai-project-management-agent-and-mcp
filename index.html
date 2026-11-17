@@ -212,6 +212,69 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
 @keyframes stamp{from{opacity:0;transform:rotate(-12deg) scale(2.4)}}
 .hud{display:flex;gap:14px}
 .hud b{color:var(--gold-l)}
+
+/* ---- demo v3: Harbor dashboard skin ---- */
+#demo{padding:24px 30px;--gold-l:#a993ff;--gold:#7c5cff;--cream:#e8ecf4;--muted:#8a94a6;--ok:#2ecc71;--red:#ff6b5b;--amber:#f1c40f}
+#demo .win{height:852px;border-radius:14px;overflow:hidden;background:#0f1420;border:1px solid #263044;box-shadow:0 40px 120px rgba(0,0,0,.55),0 0 0 1px rgba(124,92,255,.3),0 0 90px rgba(124,92,255,.14);display:flex;flex-direction:column;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#e8ecf4}
+.wbar{display:flex;align-items:center;gap:12px;height:36px;padding:0 14px;background:#0c111b;border-bottom:1px solid #263044;font:12px var(--mono);color:#8a94a6;flex:none}
+.wbar .dots i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px}
+.wurl{flex:1;max-width:620px;background:#171e2e;border:1px solid #263044;border-radius:7px;padding:4px 12px;color:#c6cedd}
+.wtag{margin-left:auto;font:700 10px var(--mono);letter-spacing:.14em;color:#7c5cff;text-transform:uppercase}
+.dash{flex:1;padding:16px 20px 18px;display:flex;flex-direction:column;gap:12px;min-height:0}
+.dhead{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.dh1{font-size:24px;font-weight:700;letter-spacing:-.3px;margin:0 0 3px;color:#e8ecf4;line-height:1.2}
+.dsub{color:#8a94a6;font-size:13px}
+.dstats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;flex:none}
+.dstat{background:#171e2e;border:1px solid #263044;border-radius:12px;padding:12px 16px}
+.dstat .big{font-size:26px;font-weight:700;letter-spacing:-.5px;color:#e8ecf4;font-variant-numeric:tabular-nums;line-height:1.15}
+.dstat .big.teal{color:#2fd4a6}.dstat .big.purple{color:#a993ff}.dstat .dim{color:#5a6478}
+.dstat .cap{color:#8a94a6;font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin-top:3px}
+.dstat.bump{animation:bump .55s ease}
+@keyframes bump{40%{transform:translateY(-3px);box-shadow:0 0 0 1px #7c5cff,0 0 28px rgba(124,92,255,.35)}}
+#demo .demo-grid{display:grid;grid-template-columns:900px 1fr;gap:14px;height:auto;flex:1;min-height:0}
+#demo .board{background:#171e2e;border:1px solid #263044;border-radius:12px;padding:12px}
+#demo .console{background:#171e2e;border:1px solid #263044;border-radius:12px}
+#demo .console.busy{box-shadow:0 0 0 1px rgba(124,92,255,.6),0 0 46px rgba(124,92,255,.22)}
+.ph{display:flex;justify-content:space-between;align-items:center;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:#8a94a6;margin-bottom:10px;font-weight:600}
+#demo .console .ph{padding:12px 14px 10px;margin:0;border-bottom:1px solid #263044}
+.lg{display:inline-block;width:9px;height:9px;border-radius:3px;margin:0 5px 0 10px}
+.lg.pull{background:#1f9d7a}.lg.push{background:#7c5cff}
+#demo .col{background:#0f1420;border:1px solid #1d2638}
+#demo .tcard{background:#1a2236;border:1px solid #263044;border-left:3px solid #3a4560;padding:7px 9px}
+#demo .tcard.cp{border-left-color:#7c5cff}
+#demo .tcard .tt{font-size:13px}
+#demo .tcard.risk{border-color:rgba(255,107,91,.85)}
+#demo .tm{background:#0f1420;border:1px solid #1d2638}
+#demo .meter{background:#0c111b}
+#demo .msg.user{color:#fff;background:#7c5cff}
+#demo .answer{background:#0e1420;border-left:3px solid #7c5cff;border-radius:6px;color:#e8ecf4}
+#demo .answer p,#demo .answer li{color:#e8ecf4}
+#demo .approve{background:rgba(124,92,255,.1);border-color:#7c5cff}
+#demo .approve code{color:#c9bbff}
+#demo .btn.yes{background:#7c5cff;color:#fff}
+#demo .tool{background:#0f1420}
+#demo .tool.pull{border-color:rgba(31,157,122,.55)}#demo .tool.pull .th{color:#2fd4a6}
+#demo .tool.push{border-color:rgba(124,92,255,.7)}#demo .tool.push .th{color:#c9bbff}
+#demo .tool.pull .srvtag{background:rgba(31,157,122,.2);color:#2fd4a6}
+#demo .tool.push .srvtag{background:rgba(124,92,255,.25);color:#c9bbff}
+#demo .msg.boot{color:#2fd4a6}
+#demo .inrow input{background:#0f1420;border-color:#263044}
+#demo .inrow button{background:#7c5cff;color:#fff}
+#demo .node{background:#0f1420;border-color:#263044}
+#demo .node.on{border-color:rgba(31,157,122,.7);box-shadow:0 0 18px rgba(31,157,122,.25)}
+#demo .node.on i{background:#2fd4a6;box-shadow:0 0 10px #2fd4a6}
+#demo .node.agent.on{border-color:#7c5cff;box-shadow:0 0 24px rgba(124,92,255,.4)}
+#demo .node.agent.on i{background:#a993ff;box-shadow:0 0 10px #a993ff}
+#demo .wire{background:linear-gradient(90deg,rgba(124,92,255,.15),rgba(124,92,255,.6),rgba(124,92,255,.15))}
+.pk.pull{background:#2fd4a6;box-shadow:0 0 12px #2fd4a6,0 0 26px #1f9d7a}
+.pk.push{background:#7c5cff;box-shadow:0 0 12px #a993ff,0 0 26px #7c5cff}
+.pk.ack{width:7px;height:7px;top:-3px;background:#e8ecf4;box-shadow:0 0 8px #fff}
+#demo .sweep{background:linear-gradient(90deg,transparent,rgba(47,212,166,.12) 70%,rgba(47,212,166,.5) 97%,transparent)}
+#demo .hwin{background:#171e2e;box-shadow:0 30px 90px rgba(0,0,0,.7),0 0 0 1px rgba(124,92,255,.7),0 0 70px rgba(124,92,255,.3)}
+#demo .hbar{background:#0c111b}#demo .hbar .url{background:#0f1420;color:#c6cedd}
+#demo .hbody p,#demo .hbody li{color:#e8ecf4}#demo .hbody code{color:#c9bbff}
+#demo .hbrand{color:#7c5cff;border-bottom:1px solid #263044}
+#demo .stamp{border-color:#2ecc71;color:#2ecc71}
 </style>
 </head>
 <body>
@@ -227,7 +290,7 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
   <div class="title-wrap">
     <div class="kicker reveal">Cal Poly · Technical Project Management</div>
     <h1 class="reveal d1">Agents on the<br><span class="grad">critical path.</span></h1>
-    <p class="reveal d2" style="font-size:32px;margin-top:26px;max-width:980px">How AI agents and the Model Context Protocol are changing the way technical programs get run.</p>
+    <p class="reveal d2" style="font-size:32px;margin-top:26px;max-width:980px">How AI agents automate the pulls and pushes of technical program management, using the Model Context Protocol.</p>
     <div class="byline reveal d3"><div class="bar"></div><p><b>Jules Gerard</b> <span class="muted">· Amazon</span></p></div>
   </div>
 </section>
@@ -237,38 +300,47 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
   <div class="kicker reveal">Today</div>
   <h2 class="reveal d1">What we'll cover</h2>
   <div class="grid4">
-    <div class="card reveal d2"><div class="num">01</div><h3>Why now</h3><p>Where a TPM's week actually goes, and which parts a machine can carry.</p></div>
-    <div class="card reveal d3"><div class="num">02</div><h3>Agents</h3><p>What makes an agent different from a chatbot: tools, a loop, and a goal.</p></div>
-    <div class="card reveal d4"><div class="num">03</div><h3>MCP</h3><p>The open protocol that plugs agents into your trackers, docs and data.</p></div>
-    <div class="card goldborder reveal d5"><div class="num">04</div><h3>Live demo</h3><p>A PM agent running a real sprint board over MCP. Then: how to build your own.</p></div>
+    <div class="card reveal d2"><div class="num">01</div><h3>Why now</h3><p>Most TPM work is pulling information in and pushing it back out.</p></div>
+    <div class="card reveal d3"><div class="num">02</div><h3>Agents</h3><p>Automate the pulls and pushes. Keep the decision in the middle.</p></div>
+    <div class="card reveal d4"><div class="num">03</div><h3>MCP</h3><p>The standard pipe that every pull and push goes through.</p></div>
+    <div class="card goldborder reveal d5"><div class="num">04</div><h3>Live demo</h3><p>Two MCP servers, real pulls, approved pushes. Then: build your own.</p></div>
   </div>
 </section>
 
 <!-- 3 THE TPM WEEK -->
 <section class="slide" data-title="The TPM week">
   <div class="kicker reveal">The problem</div>
-  <h2 class="reveal d1">A lot of program management is <span class="grad">information logistics.</span></h2>
-  <div class="grid2" style="margin-top:20px">
+  <h2 class="reveal d1">Most TPM work is <span class="grad">pulls and pushes.</span></h2>
+  <div class="grid3" style="margin-top:10px;grid-template-columns:1fr 1fr 1fr">
     <div class="card reveal d2">
-      <h3 class="muted" style="font-size:20px;letter-spacing:.1em;text-transform:uppercase">Moving information</h3>
-      <ul class="clean">
-        <li>Chasing status across five tools and three time zones</li>
-        <li>Reconciling the tracker with what people actually said</li>
-        <li>Hunting for the blocked dependency before it bites</li>
-        <li>Rewriting the same facts for the team, then for leadership</li>
+      <span class="pill">Pull</span>
+      <ul class="clean" style="margin-top:10px">
+        <li>Status from the tracker</li>
+        <li>PRs and builds from git</li>
+        <li>Decisions buried in chat and docs</li>
+        <li>Dates from five calendars</li>
       </ul>
     </div>
     <div class="card goldborder reveal d3">
-      <h3 class="gold" style="font-size:20px;letter-spacing:.1em;text-transform:uppercase">Making calls</h3>
-      <ul class="clean">
-        <li>Choosing what to cut when the date is fixed</li>
-        <li>Negotiating trade-offs between teams</li>
-        <li>Having the hard conversation early</li>
+      <span class="pill" style="background:var(--gold-l);color:#06170f">Decide</span>
+      <ul class="clean" style="margin-top:10px">
+        <li>What to cut when the date is fixed</li>
+        <li>Trade-offs between teams</li>
+        <li>The hard conversation, early</li>
         <li>Owning the commitment</li>
       </ul>
     </div>
+    <div class="card reveal d4">
+      <span class="pill">Push</span>
+      <ul class="clean" style="margin-top:10px">
+        <li>Status to leadership</li>
+        <li>Owner and status changes to the tracker</li>
+        <li>Reminders and follow-ups</li>
+        <li>The report to the docs portal</li>
+      </ul>
+    </div>
   </div>
-  <p class="reveal d4" style="margin-top:34px;font-size:28px">Agents are good at the left column. <b class="gold">The right column is still the job.</b></p>
+  <p class="reveal d5" style="margin-top:30px;font-size:28px">Agents automate the pulls and pushes. <b class="gold">The decision in the middle is still the job.</b></p>
 </section>
 
 <!-- 4 LADDER -->
@@ -276,9 +348,9 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
   <div class="kicker reveal">Definitions</div>
   <h2 class="reveal d1">From chatbot to agent</h2>
   <div class="ladder">
-    <div class="rung r1 reveal d2"><span class="pill">Chatbot</span><h3 style="margin-top:16px">Answers</h3><p style="font-size:20px">Knows what it was trained on. Can't see your project.</p><div class="q">you ask</div><div class="ex">"What is a critical path?"</div></div>
-    <div class="rung r2 reveal d3"><span class="pill">Copilot</span><h3 style="margin-top:16px">Assists</h3><p style="font-size:20px">Sees what you paste or open. You do every step.</p><div class="q">you ask</div><div class="ex">"Summarize this export I pasted."</div></div>
-    <div class="rung r3 reveal d4"><span class="pill" style="background:var(--gold-l);color:#06170f">Agent</span><h3 style="margin-top:16px">Acts toward a goal</h3><p style="font-size:20px">Plans, calls tools, reads results, and repeats until the goal is met. Asks before it changes anything.</p><div class="q">you ask</div><div class="ex">"Are we going to make Friday? If not, what do I need to decide?"</div></div>
+    <div class="rung r1 reveal d2"><span class="pill">Chatbot</span><h3 style="margin-top:16px">No pulls, no pushes</h3><p style="font-size:20px">Knows only its training data. Can't see your project.</p><div class="q">you ask</div><div class="ex">"What is a critical path?"</div></div>
+    <div class="rung r2 reveal d3"><span class="pill">Copilot</span><h3 style="margin-top:16px">You pull, you push</h3><p style="font-size:20px">Helps with whatever you paste in. You move every byte yourself.</p><div class="q">you ask</div><div class="ex">"Summarize this export I pasted."</div></div>
+    <div class="rung r3 reveal d4"><span class="pill" style="background:var(--gold-l);color:#06170f">Agent</span><h3 style="margin-top:16px">Automated pulls and pushes</h3><p style="font-size:20px">Pulls live data on its own, reasons over it, and proposes pushes. Every push waits for your yes.</p><div class="q">you ask</div><div class="ex">"Are we going to make Friday? Tell leadership where we stand."</div></div>
   </div>
 </section>
 
@@ -287,19 +359,19 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
   <div class="kicker reveal">Anatomy</div>
   <div class="grid2" style="align-items:center;grid-template-columns:1fr 600px">
     <div>
-      <h2 class="reveal d1">An agent is a model in a loop, with tools.</h2>
+      <h2 class="reveal d1">An agent is a loop of pulls and pushes.</h2>
       <ul class="clean reveal d2">
-        <li><b class="gold">Model</b> does the reasoning and the writing</li>
-        <li><b class="gold">Tools</b> let it read and change the real world</li>
-        <li><b class="gold">Context</b> carries the goal, rules and history</li>
-        <li><b class="gold">Guardrails</b> decide what it may do without asking</li>
+        <li><b class="gold">Pull</b>: tools read live data from your systems</li>
+        <li><b class="gold">Reason</b>: the model connects what it pulled</li>
+        <li><b class="gold">Push</b>: tools write the result back</li>
+        <li><b class="gold">Approve</b>: a human gates every push</li>
       </ul>
     </div>
     <div class="loopbox reveal d3">
-      <div class="loopnode ln1">Plan<small>pick the next step</small></div>
-      <div class="loopnode ln2">Act<small>call a tool</small></div>
-      <div class="loopnode ln3">Observe<small>read the result</small></div>
-      <div class="loopnode ln4">Reflect<small>done? adjust?</small></div>
+      <div class="loopnode ln1">Pull<small>read via MCP</small></div>
+      <div class="loopnode ln2">Reason<small>model connects it</small></div>
+      <div class="loopnode ln3">Push<small>propose a write</small></div>
+      <div class="loopnode ln4">Approve<small>TPM says yes</small></div>
       <div class="loopcenter">goal:<br>"is the sprint<br>on track?"</div>
       <svg style="position:absolute;inset:0" viewBox="0 0 560 560"><circle cx="280" cy="280" r="200" fill="none" stroke="rgba(242,199,92,.35)" stroke-width="2" stroke-dasharray="6 8"><animateTransform attributeName="transform" type="rotate" from="0 280 280" to="360 280 280" dur="16s" repeatCount="indefinite"/></circle></svg>
     </div>
@@ -309,7 +381,7 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
 <!-- 6 MCP N x M -->
 <section class="slide" data-title="Why MCP">
   <div class="kicker reveal">Model Context Protocol</div>
-  <h2 class="reveal d1">MCP turns <span class="gold">N × M</span> integrations into <span class="gold">N + M</span>.</h2>
+  <h2 class="reveal d1" style="font-size:50px">MCP is one standard pipe for every pull and push:<br><span class="gold">N × M</span> integrations become <span class="gold">N + M</span>.</h2>
   <div class="grid2 mesh">
     <div class="card reveal d2">
       <p class="muted" style="font:600 15px var(--mono);letter-spacing:.1em;margin-bottom:10px">BEFORE · EVERY APP WIRES EVERY TOOL</p>
@@ -356,8 +428,8 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
     <div class="card goldborder reveal d4"><span class="pill">Server</span><h3 style="margin-top:14px">Wraps a system</h3><p>Your tracker, repo, calendar or database. Publishes what the agent may do, with typed inputs.</p></div>
   </div>
   <div class="grid3" style="margin-top:28px">
-    <div class="reveal d4"><p><b class="gold">Tools</b> &nbsp;actions the model can call: <code style="font-family:var(--mono);font-size:20px">update_task</code></p></div>
-    <div class="reveal d5"><p><b class="gold">Resources</b> &nbsp;data the app can read in: files, records, schemas</p></div>
+    <div class="reveal d4"><p><b class="gold">Tools</b> &nbsp;pulls like <code style="font-family:var(--mono);font-size:19px">analyze_risks</code> and pushes like <code style="font-family:var(--mono);font-size:19px">update_task</code></p></div>
+    <div class="reveal d5"><p><b class="gold">Resources</b> &nbsp;pulls the app reads in: files, records, schemas</p></div>
     <div class="reveal d6"><p><b class="gold">Prompts</b> &nbsp;reusable templates the user can invoke</p></div>
   </div>
   <p class="reveal d6 muted" style="margin-top:28px;font-size:21px">Open standard introduced by Anthropic in November 2024 and now supported across many agent hosts. Spec: modelcontextprotocol.io</p>
@@ -366,7 +438,7 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
 <!-- 8 WIRE -->
 <section class="slide" data-title="On the wire">
   <div class="kicker reveal">On the wire</div>
-  <h2 class="reveal d1">One tool call is two JSON messages.</h2>
+  <h2 class="reveal d1">A pull is two JSON messages.</h2>
   <div class="grid2">
     <div class="reveal d2">
       <p class="gold" style="font:600 15px var(--mono);margin-bottom:10px">HOST → SERVER</p>
@@ -406,42 +478,54 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
 <section class="slide" data-title="Demo">
   <div class="section">
     <div class="kicker reveal">Live demo</div>
-    <div class="big reveal d1">Meet the<br><span class="grad">PM agent.</span></div>
-    <p class="reveal d2" style="margin-top:36px;font-size:28px;max-width:1100px">Project: <b>Mustang Rover</b>, a fictional autonomous campus delivery robot. Five engineers, fourteen tasks, four days left in the sprint. The agent connects to two MCP servers: the sprint board, and Harbor, a docs portal it publishes to.</p>
+    <div class="big reveal d1">Pulls and pushes,<br><span class="grad">live.</span></div>
+    <p class="reveal d2" style="margin-top:36px;font-size:28px;max-width:1150px">Project: <b>Mustang Rover</b>, a fictional campus delivery robot. Five engineers, fourteen tasks, four days left. The agent <b class="gold">pulls</b> from the sprint board and <b class="gold">pushes</b> to Harbor, a docs portal, through two MCP servers.</p>
   </div>
 </section>
 
 <!-- 10 DEMO -->
 <section class="slide" id="demo" data-title="Live demo">
   <canvas id="net" width="1600" height="900" style="position:absolute;inset:0;pointer-events:none"></canvas>
-  <div class="demo-head">
-    <h2>Mustang Rover · <span class="gold">PM agent</span></h2>
-    <div class="topo">
-      <div class="node" id="nBoard"><i></i><div><b>mustang-rover-board</b>stdio · <span id="tBoard">–</span> tools</div></div>
-      <div class="wire" id="wBoard"></div>
-      <div class="node agent" id="nAgent"><i></i><div><b>pm-agent</b>MCP host</div></div>
-      <div class="wire" id="wHarbor"></div>
-      <div class="node" id="nHarbor"><i></i><div><b>harbor-docs</b>stdio · <span id="tHarbor">–</span> tools</div></div>
-    </div>
-  </div>
-  <div class="demo-grid">
-    <div class="board">
-      <div class="board-top"><span><b>Sprint 4</b> &nbsp;ends <span id="sprintEnd"></span> · <span id="pct"></span></span><span><span style="color:var(--gold-l)">▌</span> critical path &nbsp; <button class="reset" id="resetBtn">reset board</button></span></div>
-      <div class="cols" id="cols"></div>
-      <div class="team" id="team"></div>
-    </div>
-    <div class="console" id="console">
-      <div class="con-top"><span><b>pm-agent</b> · mustang-rover-board</span><span class="hud"><span><b id="callCount">0</b> tool calls</span><span><b id="writes">0</b> writes approved</span></span></div>
-      <div id="log"></div>
-      <div class="chips" id="chips">
-        <button class="chip" data-s="risk">What's at risk this sprint?</button>
-        <button class="chip" data-s="rebalance">Fix ownership gaps</button>
-        <button class="chip" data-s="unblock">Encoder arrived: unblock R-104</button>
-        <button class="chip" data-s="report">Draft the leadership update</button>
-        <button class="chip" data-s="publish">Publish it to Harbor</button>
+  <div class="win">
+    <div class="wbar"><span class="dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="wurl">🔒 harbor / page / mustang-rover-pm-agent</span><span class="wtag">Harbor</span></div>
+    <div class="dash">
+      <div class="dhead">
+        <div><h1 class="dh1">Mustang Rover — PM Agent Command Center</h1><div class="dsub">Sprint 4 &middot; automated pulls and pushes over MCP &middot; pulls run automatically, pushes need approval</div></div>
+        <div class="topo">
+          <div class="node" id="nBoard"><i></i><div><b>mustang-rover-board</b>stdio · <span id="tBoard">–</span> tools</div></div>
+          <div class="wire" id="wBoard"></div>
+          <div class="node agent" id="nAgent"><i></i><div><b>pm-agent</b>MCP host</div></div>
+          <div class="wire" id="wHarbor"></div>
+          <div class="node" id="nHarbor"><i></i><div><b>harbor-docs</b>stdio · <span id="tHarbor">–</span> tools</div></div>
+        </div>
       </div>
-      <div class="inrow"><input id="ask" placeholder="Ask the agent anything about the sprint…"><button id="send">→</button></div>
-      <div class="small" style="padding:0 14px 10px">Board tool calls run live in this page; Harbor calls are simulated in the public copy. The plan is a scripted replay. The full LLM agent runs in the terminal.</div>
+      <div class="dstats">
+        <div class="dstat"><div class="big" id="pct">–</div><div class="cap">Points done</div></div>
+        <div class="dstat"><div class="big" id="sprintEnd">–</div><div class="cap">Sprint ends</div></div>
+        <div class="dstat" id="sPulls"><div class="big teal" id="nPulls">0</div><div class="cap">Automated pulls</div></div>
+        <div class="dstat" id="sPushes"><div class="big purple" id="nPushes">0</div><div class="cap">Approved pushes</div></div>
+        <div class="dstat"><div class="big">2 <span class="dim">·</span> 27</div><div class="cap">MCP servers · tools</div></div>
+      </div>
+      <div class="demo-grid">
+        <div class="board">
+          <div class="ph"><span>Sprint board &middot; pulled from mustang-rover-board</span><span><i class="lg push"></i>critical path <button class="reset" id="resetBtn">reset</button></span></div>
+          <div class="cols" id="cols"></div>
+          <div class="team" id="team"></div>
+        </div>
+        <div class="console" id="console">
+          <div class="ph"><span>pm-agent &middot; MCP host</span><span><i class="lg pull"></i>pull <i class="lg push"></i>push</span></div>
+          <div id="log"></div>
+          <div class="chips" id="chips">
+            <button class="chip" data-s="risk">Pull · what's at risk?</button>
+            <button class="chip" data-s="rebalance">Push · fix ownership gaps</button>
+            <button class="chip" data-s="unblock">Push · unblock R-104</button>
+            <button class="chip" data-s="report">Pull · draft leadership update</button>
+            <button class="chip" data-s="publish">Push · publish to Harbor</button>
+          </div>
+          <div class="inrow"><input id="ask" placeholder="Ask the agent anything about the sprint…"><button id="send">→</button></div>
+          <div class="small" style="padding:0 14px 10px">Board pulls and pushes run live in this page; Harbor calls are simulated in the public copy. The plan is a scripted replay. The full LLM agent runs in the terminal.</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -449,17 +533,19 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
 <!-- 11 UNDER THE HOOD -->
 <section class="slide" data-title="Under the hood">
   <div class="kicker reveal">Under the hood</div>
-  <h2 class="reveal d1">About 300 lines of Python. No framework.</h2>
+  <h2 class="reveal d1">Pull tools, push tools. About 300 lines of Python.</h2>
   <div class="grid2" style="grid-template-columns:1.15fr 1fr">
     <div class="reveal d2">
       <p class="gold" style="font:600 15px var(--mono);margin-bottom:10px">pm_board_server.py · register a tool</p>
 <pre class="code"><span class="n">TOOLS</span> = {
+  <span class="c"># PULL: reads the board, never changes it</span>
   <span class="s">"analyze_risks"</span>: (
     tool_analyze_risks,
     <span class="s">"Deterministic risk scan: blocked, overdue,
      unassigned, blocked dependencies and
      overloaded people, sorted by severity."</span>,
     {<span class="s">"type"</span>: <span class="s">"object"</span>, <span class="s">"properties"</span>: {}}),
+  <span class="c"># PUSH: writes to the board</span>
   <span class="s">"update_task"</span>: (
     tool_update_task,
     <span class="s">"Change status or assignee, or add a note.
@@ -484,8 +570,8 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
     }
   },
   <span class="k">"allowedTools"</span>: [
-    <span class="c">// reads run freely,</span>
-    <span class="c">// update_task always asks</span>
+    <span class="c">// pulls run automatically,</span>
+    <span class="c">// pushes always ask first</span>
   ]
 }</pre>
       <p style="margin-top:18px;font-size:21px"><code style="font-family:var(--mono);color:var(--gold-l)">kiro-cli chat --agent pm-agent</code></p>
@@ -496,39 +582,40 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
 <!-- 12 PRINCIPLE -->
 <section class="slide" data-title="Design principle">
   <div class="kicker reveal">The most important design choice</div>
-  <h2 class="reveal d1" style="font-size:68px;max-width:1300px">Code computes the numbers.<br><span class="grad">The model makes the judgment.</span></h2>
-  <div class="grid2" style="margin-top:30px">
-    <div class="card reveal d2"><h3>Deterministic, in the MCP server</h3><p>Overdue dates, story points, critical path, workload percentages. Same input, same answer, every run. Testable.</p></div>
-    <div class="card goldborder reveal d3"><h3>Probabilistic, in the model</h3><p>Which risk matters most, how to phrase it for an exec, what decision to put in front of the TPM, what to ask next.</p></div>
+  <h2 class="reveal d1" style="font-size:62px;max-width:1400px">Pull with code. Reason with the model.<br><span class="grad">Push with a human.</span></h2>
+  <div class="grid3" style="margin-top:26px">
+    <div class="card reveal d2"><span class="pill">Pulls · MCP server</span><p style="margin-top:14px">Overdue dates, story points, critical path, workload. Deterministic, testable, same answer every run.</p></div>
+    <div class="card reveal d3"><span class="pill">Reasoning · model</span><p style="margin-top:14px">Which risk matters most, how to say it to an exec, what to put in front of the TPM.</p></div>
+    <div class="card goldborder reveal d4"><span class="pill" style="background:var(--gold-l);color:#06170f">Pushes · TPM approves</span><p style="margin-top:14px">Owner changes, status moves, published reports. Nothing is written without a yes.</p></div>
   </div>
-  <p class="reveal d4" style="margin-top:30px">Ask a model to add up points and it can be confidently wrong. Ask it to <b class="gold">explain</b> points a tool added up, and it does that well.</p>
+  <p class="reveal d5" style="margin-top:28px">Ask a model to add up points and it can be confidently wrong. Ask it to <b class="gold">explain</b> points a pull added up, and it does that well.</p>
 </section>
 
 <!-- 13 GUARDRAILS -->
 <section class="slide" data-title="Guardrails">
   <div class="kicker reveal">Lessons from running agents on real work</div>
-  <h2 class="reveal d1">Trust is designed in, not hoped for.</h2>
+  <h2 class="reveal d1">Pulls run free. Pushes earn trust.</h2>
   <div class="grid3">
-    <div class="card reveal d2"><div class="num">1</div><h3>Agent proposes, human decides</h3><p>Reads run freely. Every write shows the exact change and waits for approval.</p></div>
-    <div class="card reveal d3"><div class="num">2</div><h3>Cite everything</h3><p>Every claim points to a task ID or record, so a reviewer can check it in seconds.</p></div>
-    <div class="card reveal d4"><div class="num">3</div><h3>Least privilege tools</h3><p>Expose <i>update_task</i>, not <i>run_sql</i>. Narrow tools are safer and easier for the model to use correctly.</p></div>
-    <div class="card reveal d4"><div class="num">4</div><h3>Say when evidence is thin</h3><p>"I don't have enough data" is a valid answer. Make the agent say it instead of guessing.</p></div>
+    <div class="card reveal d2"><div class="num">1</div><h3>Pulls automatic, pushes approved</h3><p>Reads run on their own. Every push shows the exact change and waits for a yes.</p></div>
+    <div class="card reveal d3"><div class="num">2</div><h3>Cite every pull</h3><p>Every claim points to the task ID or record it came from, so a reviewer can check it in seconds.</p></div>
+    <div class="card reveal d4"><div class="num">3</div><h3>Narrow pushes</h3><p>Expose <i>update_task</i>, not <i>run_sql</i>. Narrow tools are safer and easier for the model to use correctly.</p></div>
+    <div class="card reveal d4"><div class="num">4</div><h3>Say when the pull is thin</h3><p>"I don't have enough data" is a valid answer. Make the agent say it instead of guessing.</p></div>
     <div class="card reveal d5"><div class="num">5</div><h3>Measure before you trust</h3><p>Compare the agent's output against answers your experts labeled, before you rely on it.</p></div>
-    <div class="card reveal d6"><div class="num">6</div><h3>Keep an audit trail</h3><p>Log every change: who, what, when, and that an agent did it.</p></div>
+    <div class="card reveal d6"><div class="num">6</div><h3>Log every push</h3><p>Who, what, when, and that an agent did it.</p></div>
   </div>
 </section>
 
 <!-- 14 WEEK -->
 <section class="slide" data-title="A TPM week">
   <div class="kicker reveal">In practice</div>
-  <h2 class="reveal d1">Where an agent fits in a sprint</h2>
-  <table class="week reveal d2">
-    <tr><th></th><th>Agent does</th><th>TPM does</th></tr>
-    <tr><td>Planning</td><td>Checks capacity vs. commitments, flags dependency chains</td><td>Sets priorities, negotiates scope</td></tr>
-    <tr><td>Daily</td><td>Scans for new blockers and overdue work before standup</td><td>Unblocks people, has the conversation</td></tr>
-    <tr><td>Mid-sprint</td><td>Recomputes the critical path, proposes reassignments</td><td>Approves or rejects each change</td></tr>
-    <tr><td>Friday</td><td>Drafts the team and leadership updates from the board</td><td>Edits for judgment and tone, sends it</td></tr>
-    <tr><td>Retro</td><td>Pulls what slipped and why from the activity log</td><td>Leads the discussion, picks what changes</td></tr>
+  <h2 class="reveal d1">Pulls and pushes across a sprint</h2>
+  <table class="week reveal d2" style="font-size:19px">
+    <tr><th></th><th>Automated pull</th><th>Automated push (approved)</th><th>TPM decides</th></tr>
+    <tr><td>Planning</td><td>Capacity vs. commitments</td><td>Draft sprint plan to the tracker</td><td>Priorities and scope</td></tr>
+    <tr><td>Daily</td><td>New blockers, overdue work</td><td>Standup digest to team chat</td><td>Who to unblock first</td></tr>
+    <tr><td>Mid-sprint</td><td>Critical path, workload</td><td>Proposed reassignments</td><td>Approve or reject each one</td></tr>
+    <tr><td>Friday</td><td>One sprint summary</td><td>Leadership update to the docs portal</td><td>Tone, judgment, send</td></tr>
+    <tr><td>Retro</td><td>What slipped, from the activity log</td><td>Retro notes</td><td>What changes next sprint</td></tr>
   </table>
 </section>
 
@@ -539,11 +626,11 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
   <div class="grid2">
     <ul class="clean reveal d2">
       <li><b class="gold">Write clear specs for machines.</b> An agent prompt is a requirements doc. Ambiguity shows up as bugs.</li>
-      <li><b class="gold">Think in systems.</b> Decide which steps are deterministic code and which need judgment.</li>
+      <li><b class="gold">Know your pulls from your pushes.</b> Pulls are cheap to automate. Pushes change what other people see.</li>
       <li><b class="gold">Evaluate, don't eyeball.</b> Build a small labeled test set and measure.</li>
     </ul>
     <ul class="clean reveal d3">
-      <li><b class="gold">Own the risk call.</b> Know what an agent may change without asking, and defend that line.</li>
+      <li><b class="gold">Own the push line.</b> Decide which pushes an agent may make without asking, and defend that line.</li>
       <li><b class="gold">Learn the plumbing.</b> APIs, JSON, a little Python. Enough to wire one MCP server yourself.</li>
       <li><b class="gold">Stay close to people.</b> As the logistics get automated, trust and communication carry more of the job.</li>
     </ul>
@@ -553,16 +640,16 @@ table.week th{text-align:left;font:600 15px var(--mono);color:var(--muted);lette
 <!-- 16 BUILD YOUR OWN -->
 <section class="slide" data-title="Build your own">
   <div class="kicker reveal">Your turn</div>
-  <h2 class="reveal d1">Build one this weekend</h2>
+  <h2 class="reveal d1">Automate one pull and one push this weekend</h2>
   <div class="grid4">
-    <div class="card reveal d2"><div class="num">1</div><h3>Pick one chore</h3><p>Status digest, risk scan or standup prep. Something you do every week.</p></div>
-    <div class="card reveal d3"><div class="num">2</div><h3>Wrap the data</h3><p>An MCP server with 3–5 narrow tools over your tracker export, or a JSON file.</p></div>
-    <div class="card reveal d4"><div class="num">3</div><h3>Write the rules</h3><p>Prompt: what it may read, what needs approval, how to cite, when to say "not enough data."</p></div>
-    <div class="card goldborder reveal d5"><div class="num">4</div><h3>Test it</h3><p>Write ten questions with known answers. Run them. Fix the tools, not just the prompt.</p></div>
+    <div class="card reveal d2"><div class="num">1</div><h3>Pick one pull</h3><p>Something you gather every week: a status digest, a risk scan, standup prep.</p></div>
+    <div class="card reveal d3"><div class="num">2</div><h3>Wrap the data</h3><p>An MCP server with 3–5 narrow pull tools over a tracker export or a JSON file.</p></div>
+    <div class="card reveal d4"><div class="num">3</div><h3>Add one push</h3><p>One write tool behind approval: update a ticket, post a summary, publish a page.</p></div>
+    <div class="card goldborder reveal d5"><div class="num">4</div><h3>Test it</h3><p>Ten questions with known answers. Run them. Fix the tools, not just the prompt.</p></div>
   </div>
   <pre class="code reveal d6" style="margin-top:34px;font-size:18px"><span class="c"># everything from today's demo</span>
 python3 demo/pm_board_server.py --reset   <span class="c"># fresh board</span>
-python3 demo/wire_demo.py                 <span class="c"># watch raw MCP messages</span>
+python3 demo/wire_demo.py                 <span class="c"># watch raw MCP pulls on the wire</span>
 cd demo && kiro-cli chat --agent pm-agent  <span class="c"># talk to the real agent</span></pre>
 </section>
 
@@ -574,7 +661,7 @@ cd demo && kiro-cli chat --agent pm-agent  <span class="c"># talk to the real ag
   </svg>
   <div class="title-wrap">
     <div class="kicker reveal">Thank you</div>
-    <h1 class="reveal d1" style="font-size:120px">Learn by doing.<br><span class="grad">Now with agents.</span></h1>
+    <h1 class="reveal d1" style="font-size:100px">Learn by doing.<br><span class="grad">Automate the pulls<br>and pushes.</span></h1>
     <p class="reveal d2" style="margin-top:34px;font-size:32px">Questions?</p>
     <div class="byline reveal d3"><div class="bar"></div><p><b>Jules Gerard</b> <span class="muted">· Amazon</span></p></div>
   </div>
@@ -666,7 +753,7 @@ function render(flashId){
       const due=t.status==="done"?'<span class="due">done</span>':t.d<0?`<span class="due late">${-t.d}d late</span>`:`<span class="due ${t.d<=2?'soon':''}">due ${fmt(t.d)}</span>`;
       return `<div class="tcard ${cp.has(t.id)?'cp':''}" data-id="${t.id}"><div class="tid"><span>${t.id}</span><span>${t.priority==='critical'?'<span style="color:var(--red)">CRITICAL</span>':t.points+' pts'}</span></div><div class="tt">${t.title}</div><div class="meta">${t.assignee?`<span class="av" style="background:${color(t.assignee)}" title="${t.assignee}">${ini(t.assignee)}</span>`:'<span class="av none">?</span>'}${due}</div></div>`}).join('')}</div>`}).join('');
   document.getElementById('team').innerHTML=workload().sort((a,b)=>a.name.localeCompare(b.name)).map(w=>`<div class="tm"><div class="row"><span class="av" style="background:${color(w.name)}">${ini(w.name)}</span>${w.name.split(' ')[0]}</div><div class="meter"><i style="width:${Math.min(100,w.load_pct)}%;background:${w.overloaded?'var(--red)':w.load_pct>=90?'var(--amber)':'var(--ok)'}"></i></div><div style="margin-top:5px">${w.open_points}/${w.capacity} pts</div></div>`).join('');
-  const s=TOOLS.sprint_summary();document.getElementById('sprintEnd').textContent=fmt(B.sprint_ends_in_days);document.getElementById('pct').textContent=`${s.points_done}/${s.points_total} pts done`;
+  const s=TOOLS.sprint_summary();document.getElementById('sprintEnd').textContent=fmt(B.sprint_ends_in_days);document.getElementById('pct').textContent=`${s.points_done}/${s.points_total}`;
   document.querySelectorAll('.tcard').forEach(el=>{const b=before[el.dataset.id];if(!b)return;const a=el.getBoundingClientRect();
     const sc=document.getElementById('stage').getBoundingClientRect().width/1600;const dx=(b.left-a.left)/sc,dy=(b.top-a.top)/sc;
     if(dx||dy){el.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:700,easing:'cubic-bezier(.2,.8,.2,1)'})}
@@ -679,15 +766,19 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function add(html,cls){const d=document.createElement('div');d.className=cls;d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 async function think(t){add(esc(t),'msg think');await sleep(650)}
-async function call(name,args={},srv='board'){calls++;document.getElementById('callCount').textContent=calls;
-  const H=srv==='harbor';const el=add(`<div class="th"><span><span class="srvtag">${H?'harbor-docs':'board'}</span>${name}(${esc(JSON.stringify(args))})</span><span class="st"><span class="spinner"></span></span></div><pre></pre>`,'tool msg'+(H?' harbor':''));
-  await packet(H?'wHarbor':'wBoard',!H,false);hit(H?'nHarbor':'nBoard');
+const PUSHES=new Set(['update_task','harbor-create-page','harbor-deploy']);let pulls=0,pushes=0;
+function bump(id,v,tile){document.getElementById(id).textContent=v;const t=document.getElementById(tile);t.classList.remove('bump');void t.offsetWidth;t.classList.add('bump')}
+async function call(name,args={},srv='board'){calls++;
+  const H=srv==='harbor',P=PUSHES.has(name),kind=P?'push':'pull',wire=H?'wHarbor':'wBoard';
+  const el=add(`<div class="th"><span><span class="srvtag">${kind.toUpperCase()} · ${H?'harbor':'board'}</span>${name}(${esc(JSON.stringify(args))})</span><span class="st"><span class="spinner"></span></span></div><pre></pre>`,'tool msg '+kind);
+  await packet(wire,!H,P?'push':'ack');hit(H?'nHarbor':'nBoard');
   await sleep(250+Math.random()*350);let res,err=false;try{res=(H?HARBOR:TOOLS)[name](args)}catch(e){res={error:e.message};err=true}
-  await packet(H?'wHarbor':'wBoard',H,true);hit('nAgent');
+  await packet(wire,H,P?'ack':'pull');hit('nAgent');
+  if(!err){if(P){pushes++;bump('nPushes',pushes,'sPushes')}else{pulls++;bump('nPulls',pulls,'sPulls')}}
   el.querySelector('pre').textContent=JSON.stringify(res,null,2);const st=el.querySelector('.st');st.textContent=err?'error':'✓ result';st.classList.add(err?'x':'ok');
   el.querySelector('.th').onclick=()=>el.classList.toggle('open');log.scrollTop=log.scrollHeight;await sleep(250);return res}
-function approve(name,args,why){return new Promise(res=>{const el=add(`<div class="ah">APPROVAL NEEDED · WRITE</div><div>${why}</div><div style="margin-top:6px"><code>${name}(${esc(JSON.stringify(args))})</code></div><div class="btns"><button class="btn yes">Approve</button><button class="btn no">Deny</button></div>`,'approve msg');
-  el.querySelector('.yes').onclick=()=>{el.classList.add('done');writes++;document.getElementById('writes').textContent=writes;el.insertAdjacentHTML('beforeend','<div class="small" style="color:var(--ok);margin-top:6px">✓ approved by TPM</div>');res(true)};
+function approve(name,args,why){return new Promise(res=>{const el=add(`<div class="ah">PUSH · NEEDS YOUR APPROVAL</div><div>${why}</div><div style="margin-top:6px"><code>${name}(${esc(JSON.stringify(args))})</code></div><div class="btns"><button class="btn yes">Approve</button><button class="btn no">Deny</button></div>`,'approve msg');
+  el.querySelector('.yes').onclick=()=>{el.classList.add('done');writes++;el.insertAdjacentHTML('beforeend','<div class="small" style="color:var(--ok);margin-top:6px">✓ approved by TPM</div>');res(true)};
   el.querySelector('.no').onclick=()=>{el.classList.add('done');el.insertAdjacentHTML('beforeend','<div class="small" style="color:var(--red);margin-top:6px">✕ denied by TPM</div>');res(false)}})}
 function md(s){const out=[];let inList=false;
   for(const line of s.split('\n')){let l=esc(line).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>').replace(/\[(RED|AMBER|GREEN)\]/g,'<span class="rag $1">$1</span>');
@@ -716,7 +807,7 @@ const uid=()=>(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xx
 const HARBOR={
   'harbor-create-page':a=>{const id=uid();return{pageId:id,title:a.title,slug:a.slug,folder:'root',portal:`harbor/page/${id}`}},
   'harbor-deploy':a=>({deployed:Object.keys(a.files).length+' file(s)',version:1,status:'live'})};
-function packet(wireId,leftward,res){const w=document.getElementById(wireId);const d=document.createElement('div');d.className='pk'+(res?' res':'');w.appendChild(d);
+function packet(wireId,leftward,res){const w=document.getElementById(wireId);const d=document.createElement('div');d.className='pk '+(res||'');w.appendChild(d);
   const W=w.offsetWidth-10;const a=d.animate([{transform:`translateX(${leftward?W:0}px)`},{transform:`translateX(${leftward?0:W}px)`}],{duration:380,easing:'ease-in-out'});
   return Promise.race([a.finished,sleep(450)]).then(()=>d.remove())}
 function hit(id){const n=document.getElementById(id);n.classList.remove('hit');void n.offsetWidth;n.classList.add('hit')}
@@ -729,17 +820,17 @@ async function boot(){if(booted)return;booted=true;busy=true;con.classList.add('
   const L=async(t,ms=280)=>{add(t,'msg boot');await sleep(ms)};
   await L('▸ pm-agent host starting · policy loaded');
   await L('▸ spawn <b>mustang-rover-board</b> · python3 pm_board_server.py (stdio)');
-  await packet('wBoard',true,false);await packet('wBoard',false,true);
+  await packet('wBoard',true,'ack');await packet('wBoard',false,'pull');
   await L('  initialize → protocolVersion 2024-11-05 ✓',150);
   document.getElementById('tBoard').textContent='7';document.getElementById('nBoard').classList.add('on');
-  await L('  tools/list → 7 tools ✓');
+  await L('  tools/list → 7 tools (6 pull · 1 push) ✓');
   await L('▸ spawn <b>harbor-docs</b> · harbor-docs-mcp (stdio)');
-  await packet('wHarbor',false,false);await packet('wHarbor',true,true);
+  await packet('wHarbor',false,'ack');await packet('wHarbor',true,'pull');
   document.getElementById('tHarbor').textContent='20';document.getElementById('nHarbor').classList.add('on');
-  await L('  initialize ✓ · tools/list → 20 tools ✓');
+  await L('  initialize ✓ · tools/list → 20 tools (8 pull · 12 push) ✓');
   document.getElementById('nAgent').classList.add('on');
-  await L('▸ reads: auto-approved · writes: require TPM approval');
-  await L('<span class="gold">READY</span> · 27 tools across 2 MCP servers. Ask me about the sprint.',0);
+  await L('▸ policy: pulls run automatically · pushes need TPM approval');
+  await L('<span class="gold">READY</span> · 27 tools across 2 MCP servers (14 pull · 13 push). Ask me about the sprint.',0);
   busy=false;con.classList.remove('busy')}
 (()=>{const cv=document.getElementById('net'),g=cv.getContext('2d');const P=[...Array(70)].map(()=>({x:Math.random()*1600,y:Math.random()*900,vx:(Math.random()-.5)*.45,vy:(Math.random()-.5)*.45}));
   (function tick(){if(slides[cur]&&slides[cur].id==='demo'){g.clearRect(0,0,1600,900);
@@ -749,11 +840,11 @@ async function boot(){if(booted)return;booted=true;busy=true;con.classList.add('
     requestAnimationFrame(tick)})()})();
 
 const SCEN={
- async risk(){await think("Goal: decide whether Sprint 4 lands. I'll pull the deterministic risk scan first.");
+ async risk(){await think("Goal: will Sprint 4 land? Pulling the deterministic risk scan first.");
   sweep();const {risks:R}=await call('analyze_risks');highlight([...new Set(R.map(r=>r.task).filter(Boolean))]);
-  await think("Several high risks. Checking whether they sit on the critical path.");
+  await think("Several high risks. Pulling the critical path to see where they sit.");
   const cp=await call('critical_path');
-  await think("Now checking whether the people on that path have room.");
+  await think("Pulling workload to see whether the people on that path have room.");
   const {workload:W}=await call('team_workload');
   const T=byId(),hi=R.filter(r=>r.severity==='high'),cpHit=R.some(r=>r.critical_path&&r.severity==='high');
   const rag=cpHit?'RED':hi.length?'AMBER':'GREEN';
@@ -766,7 +857,7 @@ const SCEN={
   if(!un.length&&!ov.length&&T['R-104'].status!=='blocked')s+=`- None urgent. Keep an eye on ${cp.path.at(-1)?.id||'the path'}.\n`;
   await answer(s)},
 
- async rebalance(){await think("Goal: every critical item has an owner and nobody is over capacity. Checking workload.");
+ async rebalance(){await think("Goal: every critical item has an owner and nobody is over capacity. Pulling workload and risks, then proposing pushes.");
   await call('team_workload');const {risks:R}=await call('analyze_risks');const made=[];
   for(const t of open().filter(t=>!t.assignee)){const o=pickOwner(t.points);if(!o){await think(`No one has room for ${t.id}. Leaving it for the TPM.`);continue}
     await think(`${t.id} is ${t.priority} and unowned. ${first(o.name)} has the most room (${o.open_points}/${o.capacity}) with nothing overdue.`);
@@ -786,33 +877,33 @@ const SCEN={
   s+=still.length?`\n**Still yours to decide:** ${still.map(w=>`${first(w.name)} is at ${w.load_pct}% (${w.tasks.join(', ')})`).join('; ')}. That work is all on the critical path, so the options are pairing, cutting scope, or accepting the risk.`:`\nEveryone is now at or under capacity.`;
   await answer(s)},
 
- async unblock(){await think("Checking R-104 before I change anything.");
+ async unblock(){await think("Pulling R-104 before I push any change.");
   const t=await call('get_task',{id:'R-104'});
   if(t.status!=='blocked'){await answer(`R-104 is already **${t.status.replace('_',' ')}**. Nothing to change.`);return}
   const before=risks().length;
   const args={id:'R-104',status:'in_progress',note:'Replacement encoder arrived; PID tuning resumed'};
   if(!await approve('update_task',args,`Move <b>R-104 Motor controller PID tuning</b> from blocked to <b>in progress</b> and log the encoder arrival.`)){await answer('Okay, R-104 stays blocked.');return}
   await call('update_task',args);
-  await think("Re-running the risk scan to see what that unlocked.");
+  await think("Pulling the risk scan again to see what that push unlocked.");
   sweep();const {risks:R}=await call('analyze_risks');highlight([...new Set(R.map(r=>r.task).filter(Boolean))]);
   await answer(`**R-104 is unblocked.** Open risks went from ${before} to ${R.length}. R-106 (integration test) no longer waits on blocked work.\n- R-104 is still ${-byId()['R-104'].d} day late. Ask Diego for a new finish date so Lena can schedule R-106.\n- Top remaining risk: **${R[0]?.task||'Capacity'}** ${R[0]?.detail||'none'}`)},
 
- async report(){await think("Pulling one summary so every number in the update comes from the board.");
-  const s=await call('sprint_summary');await answer(buildReport(s)+`\n\nEvery number above came from \`sprint_summary\`. Edit the tone, then send, or ask me to publish it.`)},
+ async report(){await think("One pull, sprint_summary, so every number in the update comes from the board.");
+  const s=await call('sprint_summary');await answer(buildReport(s)+`\n\nEvery number above came from one pull (\`sprint_summary\`). Edit the tone, then push it, or ask me to publish it to Harbor.`)},
 
- async publish(){await think("Building the update from the board, then publishing it through the second MCP server.");
+ async publish(){await think("Pull from the board, push to Harbor: two MCP servers, one task.");
   const s=await call('sprint_summary');const rep=buildReport(s);
   const title='Mustang Rover · Sprint 4 leadership update',slug='mustang-rover-sprint-4-update';
   const html=`<!doctype html><html><head><title>${title}<\/title><\/head><body>${md(rep)}<\/body><\/html>`;
-  await think("Publishing to a shared portal is a write that other people will read. Asking first.");
+  await think("Pushing to a shared portal changes what other people see. Asking first.");
   if(!await approve('harbor-create-page → harbor-deploy',{title,slug},`Publish the leadership update to <b>Harbor</b> as a new page the team can open.`)){await answer('Okay, not published. Run "Draft the leadership update" if you want to edit it first.');return}
   const pg=await call('harbor-create-page',{title,slug},'harbor');
   await call('harbor-deploy',{pageId:pg.pageId,files:{'index.html':`<!doctype html>… (${(html.length/1024).toFixed(1)} KB)`}},'harbor');
   showPreview(rep,pg.pageId);
-  await answer(`**Published to Harbor.** Page \`${pg.pageId.slice(0,8)}\` is live for the team.\n- One task, two MCP servers: the agent read the board and wrote to Harbor.\n- The page was built from a single \`sprint_summary\` call, so it matches the board exactly.\n- Nothing was published until you approved it.`)},
+  await answer(`**Published to Harbor.** Page \`${pg.pageId.slice(0,8)}\` is live for the team.\n- One task, two MCP servers: 1 pull from the board, 2 pushes to Harbor.\n- The page was built from a single \`sprint_summary\` call, so it matches the board exactly.\n- Nothing was pushed until you approved it.`)},
 
  async fallback(q){await think(`"${q}" isn't one of my scripted plans in this browser demo.`);
-  await answer(`I can **scan risks**, **rebalance owners**, **unblock work** or **draft a status update**. Try one of the prompts below, or ask me the open question in the terminal version, which runs a real model.`)}};
+  await answer(`I can **pull** risks, workload and a status summary, and **push** owner changes, status moves or a Harbor page. Try one of the prompts below, or ask me the open question in the terminal version, which runs a real model.`)}};
 
 function route(q){q=q.toLowerCase();if(/harbor|publish|post it|share it/.test(q))return'publish';if(/unblock|encoder|arriv/.test(q))return'unblock';if(/rebalanc|assign|owner|overload|capacity/.test(q))return'rebalance';
   if(/report|update|status|leader|exec|friday/.test(q))return'report';if(/risk|track|late|make it|slip|block/.test(q))return'risk';return null}
@@ -822,7 +913,7 @@ document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>run(c.dataset.s,c.te
 const ask=document.getElementById('ask');
 const submit=()=>{const q=ask.value.trim();if(!q)return;ask.value='';run(route(q),q)};
 document.getElementById('send').onclick=submit;ask.addEventListener('keydown',e=>{if(e.key==='Enter')submit()});
-document.getElementById('resetBtn').onclick=()=>{if(busy)return;resetBoard();document.querySelectorAll('.hwin').forEach(x=>x.remove());log.innerHTML='<div class="msg boot"><span class="gold">READY</span> · board reset to the start of the demo. 27 tools across 2 MCP servers.</div>';calls=0;writes=0;document.getElementById('callCount').textContent='0';document.getElementById('writes').textContent='0'};
+document.getElementById('resetBtn').onclick=()=>{if(busy)return;resetBoard();document.querySelectorAll('.hwin').forEach(x=>x.remove());log.innerHTML='<div class="msg boot"><span class="gold">READY</span> · board reset to the start of the demo. 27 tools across 2 MCP servers (14 pull · 13 push).</div>';calls=0;writes=0;pulls=0;pushes=0;document.getElementById('nPulls').textContent='0';document.getElementById('nPushes').textContent='0'};
 resetBoard();
 </script>
 </body>

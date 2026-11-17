@@ -9,11 +9,11 @@
 
 ## Demo run of show (about 6 minutes)
 
-1. Slide 10, "What's at risk this sprint?" The answer is RED: the critical path runs into blocked R-104, and R-109 has no owner.
-2. "Fix ownership gaps and rebalance." Approve both writes and watch the cards and load bars move. Point out that Maya is still overloaded, because a scope call stays with the human.
-3. "The encoder arrived. Unblock R-104." Approve it. The risk count drops.
-4. "Draft the leadership update." Every number comes from one tool call.
-5. "Publish it to Harbor." The agent uses a second MCP server (a docs portal) to publish the update, after approval. In the public copy the Harbor calls are simulated.
+1. Slide 10, "Pull · what's at risk?" The answer is RED: the critical path runs into blocked R-104, and R-109 has no owner.
+2. "Push · fix ownership gaps." Approve both writes and watch the cards and load bars move. Point out that Maya is still overloaded, because a scope call stays with the human.
+3. "Push · unblock R-104." Approve it. The risk count drops.
+4. "Pull · draft leadership update." Every number comes from one tool call.
+5. "Push · publish to Harbor." The agent uses a second MCP server (a docs portal) to publish the update, after approval. In the public copy the Harbor calls are simulated.
 6. Optional: switch to the terminal for the real thing:
 
 ```bash

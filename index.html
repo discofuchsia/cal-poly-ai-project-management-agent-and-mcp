@@ -839,7 +839,57 @@ async function boot(){if(booted)return;booted=true;busy=true;con.classList.add('
     g.fillStyle='rgba(242,199,92,.45)';for(const p of P){g.beginPath();g.arc(p.x,p.y,1.8,0,7);g.fill()}}
     requestAnimationFrame(tick)})()})();
 
+const MCP_SERVERS={
+  board:{name:'mustang-rover-board',cmd:'python3 pm_board_server.py',pull:['list_tasks','get_task','analyze_risks','critical_path','team_workload','sprint_summary'],push:['update_task']},
+  harbor:{name:'harbor-docs',cmd:'harbor-docs-mcp',pull:['harbor-get-folder','harbor-get-page','harbor-list-comments','harbor-list-files','harbor-list-folders','harbor-list-pages','harbor-read-file','harbor-search'],push:['harbor-add-tag','harbor-archive-page','harbor-create-comment','harbor-create-folder','harbor-create-page','harbor-deploy','harbor-remove-tag','harbor-resolve-comment','harbor-share-page','harbor-sync-page','harbor-toggle-like','harbor-update-page']}};
+async function proto(srv,method){const H=srv==='harbor',wire=H?'wHarbor':'wBoard',S=MCP_SERVERS[srv];
+  const el=add(`<div class="th"><span><span class="srvtag">MCP · ${H?'harbor':'board'}</span>${method}</span><span class="st"><span class="spinner"></span></span></div><pre></pre>`,'tool msg pull');
+  await packet(wire,!H,'ack');hit(H?'nHarbor':'nBoard');await sleep(200+Math.random()*250);
+  const res={server:S.name,transport:'stdio',tools:[...S.pull.map(n=>({name:n,kind:'pull'})),...S.push.map(n=>({name:n,kind:'push'}))]};
+  el.querySelector('pre').textContent=JSON.stringify(res,null,2);const st=el.querySelector('.st');st.textContent='✓ '+res.tools.length+' tools';st.classList.add('ok');
+  el.querySelector('.th').onclick=()=>el.classList.toggle('open');await packet(wire,H,'pull');hit('nAgent');await sleep(200);return res}
+
 const SCEN={
+ async mcp(){await think("Listing what I'm connected to. This is a protocol call, tools/list, sent to each MCP server.");
+  await proto('board','tools/list');await proto('harbor','tools/list');
+  const B_=MCP_SERVERS.board,H_=MCP_SERVERS.harbor;
+  await answer(`**MCP (Model Context Protocol)** is an open standard for connecting an AI agent to outside systems. Each system runs an MCP server that publishes its tools, each with a name, a description and a typed input schema. The host calls them over JSON-RPC, so I can pull data in and push changes out without custom glue code for each system.
+
+**Connected MCP servers: 2 · 27 tools**
+- **${B_.name}** · stdio · \`${B_.cmd}\` · ${B_.pull.length+B_.push.length} tools
+- Pull: ${B_.pull.map(t=>'\`'+t+'\`').join(', ')}
+- Push: ${B_.push.map(t=>'\`'+t+'\`').join(', ')}
+- **${H_.name}** · stdio · \`${H_.cmd}\` · ${H_.pull.length+H_.push.length} tools
+- Pull (${H_.pull.length}): ${H_.pull.slice(0,4).map(t=>'\`'+t+'\`').join(', ')}, …
+- Push (${H_.push.length}): \`harbor-create-page\`, \`harbor-deploy\`, \`harbor-update-page\`, …
+
+**Policy:** pulls run automatically. Every push waits for your approval. Click a tools/list card above to see the raw response.`)},
+
+ async help(){await answer(`I'm a PM agent connected to **2 MCP servers**: the sprint board and Harbor. Things you can ask:
+- **Pull:** "what's at risk?", "who's overloaded?", "what's on the critical path?", "what's blocked or overdue?", "draft the leadership update"
+- **Push:** "fix ownership gaps", "the encoder arrived, unblock R-104", "publish the update to Harbor"
+- **Plumbing:** "what is MCP?" or "list your MCP servers"`)},
+
+ async workload(){await think("Pulling workload from the board.");
+  const {workload:W}=await call('team_workload');const ov=W.filter(w=>w.overloaded);
+  await answer(`**${ov.length?ov.map(w=>first(w.name)).join(' and ')+' '+(ov.length>1?'are':'is')+' over capacity.':'Nobody is over capacity.'}** Capacity is ${W[0].capacity} points per person this sprint.
+${W.map(w=>`- **${w.name}** ${w.open_points}/${w.capacity} pts (${w.load_pct}%)${w.overloaded?' · over':''} · ${w.tasks.join(', ')||'no open work'}`).join('\n')}
+${ov.length?'\nWant me to propose pushes to rebalance? Try "fix ownership gaps".':''}`)},
+
+ async path(){await think("Pulling the critical path: the longest chain of unfinished work through dependencies.");
+  const cp=await call('critical_path');const T=byId();
+  const feeds=cp.path.flatMap(p=>T[p.id].depends_on.filter(d=>T[d].status==='blocked').map(d=>`${d} (blocked) feeds ${p.id}`));
+  await answer(`**Critical path: ${cp.path.map(p=>p.id).join(' → ')}.** ${cp.total_points} points of open work, ${cp.sprint_days_left} days left.
+${cp.path.map(p=>`- **${p.id}** ${p.title} · ${first(p.assignee)} · ${p.status.replace('_',' ')} · ${p.points} pts`).join('\n')}
+${feeds.length?'\n**Watch:** '+feeds.join('; ')+'. Any slip there moves the end date.':''}`)},
+
+ async tasks(){await think("Pulling the task list from the board.");
+  const r=await call('list_tasks');const T=byId();
+  const bl=r.tasks.filter(t=>t.status==='blocked'),od=r.tasks.filter(t=>t.status!=='done'&&T[t.id].d<0),un=r.tasks.filter(t=>t.status!=='done'&&!t.assignee);
+  const line=t=>`- **${t.id}** ${t.title} · ${t.assignee?first(t.assignee):'no owner'} · due ${t.due}`;
+  await answer(`**${r.count} tasks on the board.** ${r.tasks.filter(t=>t.status==='done').length} done, ${bl.length} blocked, ${od.length} overdue, ${un.length} without an owner.
+${bl.length?'\n**Blocked**\n'+bl.map(line).join('\n'):''}${od.length?'\n**Overdue**\n'+od.map(line).join('\n'):''}${un.length?'\n**No owner**\n'+un.map(line).join('\n'):''}`)},
+
  async risk(){await think("Goal: will Sprint 4 land? Pulling the deterministic risk scan first.");
   sweep();const {risks:R}=await call('analyze_risks');highlight([...new Set(R.map(r=>r.task).filter(Boolean))]);
   await think("Several high risks. Pulling the critical path to see where they sit.");
@@ -902,10 +952,18 @@ const SCEN={
   showPreview(rep,pg.pageId);
   await answer(`**Published to Harbor.** Page \`${pg.pageId.slice(0,8)}\` is live for the team.\n- One task, two MCP servers: 1 pull from the board, 2 pushes to Harbor.\n- The page was built from a single \`sprint_summary\` call, so it matches the board exactly.\n- Nothing was pushed until you approved it.`)},
 
- async fallback(q){await think(`"${q}" isn't one of my scripted plans in this browser demo.`);
-  await answer(`I can **pull** risks, workload and a status summary, and **push** owner changes, status moves or a Harbor page. Try one of the prompts below, or ask me the open question in the terminal version, which runs a real model.`)}};
+ async fallback(q){await think(`No scripted plan for "${q}" in the browser version. The terminal version runs a real model for open questions.`);
+  await SCEN.help()}};
 
-function route(q){q=q.toLowerCase();if(/harbor|publish|post it|share it/.test(q))return'publish';if(/unblock|encoder|arriv/.test(q))return'unblock';if(/rebalanc|assign|owner|overload|capacity/.test(q))return'rebalance';
+function route(q){q=q.toLowerCase();
+  if(/publish|post it|share it|push.*harbor|send.*harbor/.test(q))return'publish';
+  if(/\bmcp\b|server|protocol|\btools?\b|connected|connection|integration|harbor|plumbing/.test(q))return'mcp';
+  if(/^(hi|hey|hello|yo)\b|help|what can you|who are you|how does (this|it) work/.test(q))return'help';
+  if(/unblock|encoder|arriv/.test(q))return'unblock';
+  if(/rebalanc|fix|reassign|assign|owner/.test(q))return'rebalance';
+  if(/workload|capacity|overload|busy|bandwidth|who has room|load/.test(q))return'workload';
+  if(/critical|path|dependenc/.test(q))return'path';
+  if(/overdue|blocked|tasks|list|board|backlog/.test(q))return'tasks';if(/unblock|encoder|arriv/.test(q))return'unblock';if(/rebalanc|assign|owner|overload|capacity/.test(q))return'rebalance';
   if(/report|update|status|leader|exec|friday/.test(q))return'report';if(/risk|track|late|make it|slip|block/.test(q))return'risk';return null}
 async function run(key,text){if(busy)return;busy=true;con.classList.add('busy');add(esc(text),'msg user');await sleep(350);
   try{key?await SCEN[key]():await SCEN.fallback(text)}finally{busy=false;con.classList.remove('busy')}}
